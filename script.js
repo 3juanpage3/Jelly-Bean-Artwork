@@ -1,78 +1,7 @@
-// Pre-made Paintings Database
-const galleryItems = [
-  {
-    id: 1,
-    title: "Dragon Ball Super Saiyan Spark",
-    category: "anime",
-    dimensions: '16" x 20"',
-    medium: "Acrylic on Stretched Canvas",
-    price: 185,
-    image:
-      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80",
-    description:
-      "High-energy portrait featuring fiery vibrant paint splatters, bold comic linework, and neon glowing acrylic aura effects.",
-  },
-  {
-    id: 2,
-    title: "Flame Turtle Dreaming",
-    category: "nature",
-    dimensions: '12" x 12"',
-    medium: "Mixed Media & Acrylic",
-    price: 120,
-    image:
-      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Inspired by the Jelly Bean mascot turtle sleeping on a vibrant magenta pillow surrounded by colorful paint splash swirls.",
-  },
-  {
-    id: 3,
-    title: "Charizard Ember Burst",
-    category: "anime",
-    dimensions: '18" x 24"',
-    medium: "Acrylic & Metallic Gold Foil",
-    price: 240,
-    image:
-      "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Dynamic fantasy dragon flame artwork with deep black background and intense orange and cyan fiery contrasts.",
-  },
-  {
-    id: 4,
-    title: "Neon Cyber Kitty",
-    category: "nature",
-    dimensions: '11" x 14"',
-    medium: "Blacklight Neon Acrylic",
-    price: 110,
-    image:
-      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Whimsical stylized cat portrait with glowing teal eyes and blacklight fluorescent splash highlights.",
-  },
-  {
-    id: 5,
-    title: "Cosmic Astral Phoenix",
-    category: "fantasy",
-    dimensions: '20" x 24"',
-    medium: "Acrylic on Gallery Canvas",
-    price: 260,
-    image:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Ethereal mythical bird artwork flowing through purple nebulas and stardust bursts.",
-  },
-  {
-    id: 6,
-    title: "Cyberpunk Cityscape Canvas",
-    category: "fantasy",
-    dimensions: '16" x 20"',
-    medium: "Acrylic & Paint Pen",
-    price: 195,
-    image:
-      "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Sleek futuristic city alley with rain reflections, glowing neon signage, and dark deep purple tones.",
-  },
-];
+import { isSupabaseConfigured, supabase } from "./supabase-client.js";
+
+const galleryItems = [];
+let currentCategory = "all";
 
 // Shopping Cart State
 let cart = [];
@@ -92,13 +21,63 @@ function escapeHTML(value) {
 }
 
 // Initialize App
-window.onload = function () {
-  renderGallery("all");
+window.onload = async function () {
   updateCartUI();
+  await loadGallery();
 };
 
-// Render Gallery Items
-function renderGallery(categoryFilter) {
+function setGalleryStatus(message, isError = false) {
+  const status = document.getElementById("gallery-status");
+  status.textContent = message;
+  status.classList.toggle("text-pink-300", isError);
+  status.hidden = !message;
+}
+
+async function loadGallery() {
+  if (!isSupabaseConfigured) {
+    setGalleryStatus(
+      "The artwork catalogue is temporarily unavailable because Supabase is not configured.",
+      true,
+    );
+    return;
+  }
+
+  setGalleryStatus("Loading available paintings...");
+  const { data, error } = await supabase
+    .from("paintings")
+    .select(
+      "id, title, category, dimensions, medium, description, price_zar, image_path, image_alt, sort_order, created_at",
+    )
+    .eq("status", "available")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    setGalleryStatus(
+      "We could not load the artwork catalogue. Please try again later.",
+      true,
+    );
+    return;
+  }
+
+  galleryItems.splice(
+    0,
+    galleryItems.length,
+    ...data.map((painting) => ({
+      ...painting,
+      image: supabase.storage.from("artwork").getPublicUrl(painting.image_path)
+        .data.publicUrl,
+      price: painting.price_zar,
+    })),
+  );
+  setGalleryStatus(
+    galleryItems.length ? "" : "No paintings are currently available.",
+  );
+  renderGallery(currentCategory);
+}
+
+function renderGallery(categoryFilter = currentCategory) {
+  currentCategory = categoryFilter;
   const grid = document.getElementById("gallery-grid");
   grid.innerHTML = "";
 
@@ -107,35 +86,41 @@ function renderGallery(categoryFilter) {
       ? galleryItems
       : galleryItems.filter((item) => item.category === categoryFilter);
 
+  if (!filtered.length && galleryItems.length) {
+    setGalleryStatus("No available paintings in this category.");
+    return;
+  }
+  if (filtered.length) setGalleryStatus("");
+
   filtered.forEach((item) => {
     const card = document.createElement("div");
     card.className =
       "bg-brand-card/80 rounded-2xl overflow-hidden border border-purple-800/40 glow-box-hover transition-all duration-300 flex flex-col justify-between";
     card.innerHTML = `
                     <div>
-                        <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal(${item.id})">
-                            <img src="${item.image}" alt="${escapeHTML(item.title)}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <button type="button" data-open-product="${escapeHTML(item.id)}" class="relative h-64 w-full overflow-hidden group cursor-pointer">
+                          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span class="bg-brand-dark/90 text-teal-300 border border-teal-400/40 px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase flex items-center gap-2">
                                     <i class="fa-solid fa-eye"></i> Quick View
                                 </span>
                             </div>
                             <span class="absolute top-3 right-3 bg-brand-dark/80 text-pink-300 font-mono text-xs px-2.5 py-1 rounded-full border border-pink-500/30">
-                                ${item.dimensions}
+                                ${escapeHTML(item.dimensions)}
                             </span>
-                        </div>
+                        </button>
                         <div class="p-5">
-                            <h3 class="font-heading text-2xl text-white leading-tight mb-1">${item.title}</h3>
-                            <p class="text-xs text-teal-300/90 mb-3">${item.medium}</p>
-                            <p class="text-xs text-slate-400 line-clamp-2">${item.description}</p>
+                          <h3 class="font-heading text-2xl text-white leading-tight mb-1">${escapeHTML(item.title)}</h3>
+                          <p class="text-xs text-teal-300/90 mb-3">${escapeHTML(item.medium)}</p>
+                          <p class="text-xs text-slate-400 line-clamp-2">${escapeHTML(item.description)}</p>
                         </div>
                     </div>
                     <div class="p-5 pt-0 flex items-center justify-between border-t border-purple-900/30 mt-2">
                         <div>
                             <span class="text-xs text-slate-400 block">Original Art</span>
-                            <span class="text-xl font-bold font-mono text-lime-400">R ${item.price}</span>
+                            <span class="text-xl font-bold font-mono text-lime-400">R ${item.price.toLocaleString("en-ZA")}</span>
                         </div>
-                        <button onclick="addToCart(${item.id})" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold text-xs flex items-center gap-2 shadow-lg transition-transform active:scale-95">
+                        <button type="button" data-add-to-cart="${escapeHTML(item.id)}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold text-xs flex items-center gap-2 shadow-lg transition-transform active:scale-95">
                             <i class="fa-solid fa-cart-plus"></i> Add to Request
                         </button>
                     </div>
@@ -144,8 +129,17 @@ function renderGallery(categoryFilter) {
   });
 }
 
+document
+  .getElementById("gallery-grid")
+  .addEventListener("click", (clickEvent) => {
+    const productButton = clickEvent.target.closest("[data-open-product]");
+    const cartButton = clickEvent.target.closest("[data-add-to-cart]");
+    if (productButton) openProductModal(productButton.dataset.openProduct);
+    if (cartButton) addToCart(cartButton.dataset.addToCart);
+  });
+
 // Filter Buttons Switcher
-function filterGallery(category) {
+function filterGallery(category, clickEvent) {
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.classList.remove("bg-brand-pink", "text-white", "border-pink-400/30");
     btn.classList.add(
@@ -155,12 +149,12 @@ function filterGallery(category) {
     );
   });
 
-  event.target.classList.remove(
+  clickEvent.currentTarget.classList.remove(
     "bg-brand-card",
     "text-slate-300",
     "border-purple-800/40",
   );
-  event.target.classList.add(
+  clickEvent.currentTarget.classList.add(
     "bg-brand-pink",
     "text-white",
     "border-pink-400/30",
@@ -171,7 +165,7 @@ function filterGallery(category) {
 
 // Add Original Painting to Cart
 function addToCart(itemId) {
-  const item = galleryItems.find((p) => p.id === itemId);
+  const item = galleryItems.find((p) => String(p.id) === String(itemId));
   if (!item) return;
 
   const existingIndex = cart.findIndex((c) => c.id === item.id && !c.isCustom);
@@ -259,12 +253,12 @@ function updateCartUI() {
     card.className =
       "bg-brand-dark/90 rounded-xl p-3 border border-purple-800/50 flex gap-3 relative";
     card.innerHTML = `
-                    <img src="${item.image}" loading="lazy" decoding="async" class="w-16 h-16 rounded-lg object-cover border border-purple-700/40">
+                    <img src="${escapeHTML(item.image)}" alt="" loading="lazy" decoding="async" class="w-16 h-16 rounded-lg object-cover border border-purple-700/40">
                     <div class="flex-grow">
                         <div class="flex justify-between items-start pr-4">
-                            <h4 class="font-heading text-lg text-white leading-tight">${item.title}</h4>
+                            <h4 class="font-heading text-lg text-white leading-tight">${escapeHTML(item.title)}</h4>
                         </div>
-                        <p class="text-xs text-teal-300 font-mono mt-0.5">${item.details}</p>
+                        <p class="text-xs text-teal-300 font-mono mt-0.5">${escapeHTML(item.details)}</p>
                         ${item.notes ? `<p class="text-xs text-slate-400 mt-1 italic border-l-2 border-pink-500 pl-2">"${escapeHTML(item.notes)}"</p>` : ""}
 
                         <div class="flex justify-between items-center mt-3">
@@ -366,7 +360,7 @@ function submitOrderRequest(event) {
     total += sub;
     summaryHTML += `
                     <div class="flex justify-between text-xs py-1 border-b border-purple-900/40">
-                        <span>${item.qty}x ${item.title}</span>
+                        <span>${item.qty}x ${escapeHTML(item.title)}</span>
                         <span class="font-mono text-lime-400">R ${sub}</span>
                     </div>
                 `;
@@ -406,28 +400,28 @@ function closeInvoiceModal() {
 
 // Modal Quick View for Gallery Item
 function openProductModal(id) {
-  const item = galleryItems.find((p) => p.id === id);
+  const item = galleryItems.find((p) => String(p.id) === String(id));
   if (!item) return;
 
   const modalContent = document.getElementById("product-modal-content");
   modalContent.innerHTML = `
                 <div class="h-64 sm:h-auto overflow-hidden">
-                    <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+                    <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" class="w-full h-full object-cover">
                 </div>
                 <div class="p-6 flex flex-col justify-between">
                     <div>
                         <span class="text-xs uppercase tracking-wider text-pink-400 font-bold">Pre-Made Canvas Painting</span>
-                        <h3 class="font-heading text-3xl text-white mt-1">${item.title}</h3>
-                        <p class="text-xs text-teal-300 font-mono mt-1">${item.dimensions} • ${item.medium}</p>
-                        <p class="text-sm text-slate-300 mt-4 leading-relaxed">${item.description}</p>
+                        <h3 class="font-heading text-3xl text-white mt-1">${escapeHTML(item.title)}</h3>
+                        <p class="text-xs text-teal-300 font-mono mt-1">${escapeHTML(item.dimensions)} • ${escapeHTML(item.medium)}</p>
+                        <p class="text-sm text-slate-300 mt-4 leading-relaxed">${escapeHTML(item.description)}</p>
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-purple-800/50 flex items-center justify-between">
                         <div>
                             <span class="text-xs text-slate-400 block">Price</span>
-                            <span class="text-2xl font-bold font-mono text-lime-400">R ${item.price}</span>
+                            <span class="text-2xl font-bold font-mono text-lime-400">R ${item.price.toLocaleString("en-ZA")}</span>
                         </div>
-                        <button onclick="addToCart(${item.id}); closeProductModal();" class="px-5 py-2.5 rounded-xl bg-brand-pink hover:bg-pink-600 text-white font-bold text-xs flex items-center gap-2">
+                        <button type="button" data-modal-add-to-cart="${escapeHTML(item.id)}" class="px-5 py-2.5 rounded-xl bg-brand-pink hover:bg-pink-600 text-white font-bold text-xs flex items-center gap-2">
                             <i class="fa-solid fa-cart-plus"></i> Add To Order Request
                         </button>
                     </div>
@@ -437,6 +431,15 @@ function openProductModal(id) {
   document.getElementById("product-modal").classList.remove("hidden");
   document.getElementById("product-modal").classList.add("flex");
 }
+
+document
+  .getElementById("product-modal-content")
+  .addEventListener("click", (clickEvent) => {
+    const button = clickEvent.target.closest("[data-modal-add-to-cart]");
+    if (!button) return;
+    addToCart(button.dataset.modalAddToCart);
+    closeProductModal();
+  });
 
 function closeProductModal() {
   document.getElementById("product-modal").classList.add("hidden");
@@ -455,3 +458,16 @@ function showToast(message) {
     toast.classList.add("translate-y-20", "opacity-0");
   }, 3000);
 }
+
+Object.assign(window, {
+  addToCart,
+  changeQty,
+  closeInvoiceModal,
+  closeProductModal,
+  filterGallery,
+  handleCommissionSubmit,
+  openProductModal,
+  removeItem,
+  submitOrderRequest,
+  toggleCart,
+});

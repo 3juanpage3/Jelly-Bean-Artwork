@@ -291,12 +291,16 @@
                         16" x 20" • Acrylic on Gallery Canvas
                       </p>
                     </div>
-                    <button
-                      onclick="addToCart(1)"
+                    <a
+                      href="#gallery"
+                      aria-label="Browse available paintings"
                       class="bg-brand-pink hover:bg-pink-600 text-white p-3 rounded-full shadow-lg transition-transform active:scale-95"
                     >
-                      <i class="fa-solid fa-cart-plus text-lg"></i>
-                    </button>
+                      <i
+                        class="fa-solid fa-arrow-down text-lg"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -327,31 +331,39 @@
             id="filter-buttons"
           >
             <button
-              onclick="filterGallery('all')"
+              onclick="filterGallery('all', event)"
               class="filter-btn active-filter px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-pink text-white border border-pink-400/30"
             >
               All Work
             </button>
             <button
-              onclick="filterGallery('anime')"
+              onclick="filterGallery('anime', event)"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Anime & Pop Culture
             </button>
             <button
-              onclick="filterGallery('nature')"
+              onclick="filterGallery('nature', event)"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Creatures & Nature
             </button>
             <button
-              onclick="filterGallery('fantasy')"
+              onclick="filterGallery('fantasy', event)"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Fantasy & Abstract
             </button>
           </div>
         </div>
+
+        <p
+          id="gallery-status"
+          class="text-center text-sm text-slate-400"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></p>
 
         <!-- Paintings Grid -->
         <div
@@ -948,6 +960,6 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="/script.js"></script>
   </body>
 </html>
