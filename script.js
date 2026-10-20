@@ -46,10 +46,9 @@ async function loadGallery() {
   const { data, error } = await supabase
     .from("paintings")
     .select(
-      "id, title, category, dimensions, medium, description, price_zar, image_path, image_alt, sort_order, created_at",
+      "id, title, category, dimensions, medium, description, price_zar, image_path, image_alt, created_at",
     )
     .eq("status", "available")
-    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -193,21 +192,20 @@ function handleCommissionSubmit(event) {
 
   const form = event.target;
   const style = form.elements["art_style"].value;
-  const size = form.elements["canvas_size"].value;
+  const selectedSize = form.elements["canvas_size"].value;
+  const size =
+    selectedSize === "custom"
+      ? `Custom (${document.getElementById("custom-canvas-size").value.trim()})`
+      : selectedSize;
   const medium = document.getElementById("medium-select").value;
   const budget = document.getElementById("budget-select").value;
   const desc = document.getElementById("commission-desc").value;
 
-  // Base price estimation based on size selection string
-  let estPrice = 140;
-  if (size.includes("R 75")) estPrice = 75;
-  if (size.includes("R 230")) estPrice = 230;
-
   const customItem = {
     id: "custom-" + Date.now(),
     title: `Custom Art Request: ${style}`,
-    price: estPrice,
-    details: `Size: ${size} | Medium: ${medium} | Budget: ${budget}`,
+    price: 0,
+    details: `Size: ${size} | Medium: ${medium} | Willing to pay: R ${budget}`,
     notes: desc,
     qty: 1,
     isCustom: true,
@@ -218,10 +216,29 @@ function handleCommissionSubmit(event) {
   cart.push(customItem);
   updateCartUI();
   form.reset();
+  updateCustomCanvasSizeField();
 
   showToast("Custom commission request added to cart!");
   toggleCart(); // Open cart to show item
 }
+
+function updateCustomCanvasSizeField() {
+  const isCustom =
+    document.querySelector('input[name="canvas_size"]:checked')?.value ===
+    "custom";
+  const field = document.getElementById("custom-canvas-size-field");
+  const input = document.getElementById("custom-canvas-size");
+  field.hidden = !isCustom;
+  input.disabled = !isCustom;
+  input.required = isCustom;
+  if (!isCustom) input.value = "";
+}
+
+document
+  .querySelectorAll('input[name="canvas_size"]')
+  .forEach((input) =>
+    input.addEventListener("change", updateCustomCanvasSizeField),
+  );
 
 // Update Cart UI
 function updateCartUI() {
@@ -247,7 +264,7 @@ function updateCartUI() {
 
   cart.forEach((item, index) => {
     const itemTotal = item.price * item.qty;
-    grandTotal += itemTotal;
+    if (!item.isCustom) grandTotal += itemTotal;
 
     const card = document.createElement("div");
     card.className =
@@ -262,7 +279,7 @@ function updateCartUI() {
                         ${item.notes ? `<p class="text-xs text-slate-400 mt-1 italic border-l-2 border-pink-500 pl-2">"${escapeHTML(item.notes)}"</p>` : ""}
 
                         <div class="flex justify-between items-center mt-3">
-                            <span class="text-sm font-bold font-mono text-lime-400">Est. R ${itemTotal}</span>
+                            <span class="text-sm font-bold font-mono text-lime-400">${item.isCustom ? "Quote on request" : `R ${itemTotal}`}</span>
 
                             <div class="flex items-center gap-2 bg-brand-card rounded-lg border border-purple-800 px-2 py-0.5">
                                 <button onclick="changeQty(${index}, -1)" class="text-slate-400 hover:text-white text-xs px-1">-</button>
@@ -282,9 +299,12 @@ function updateCartUI() {
   const totalDiv = document.createElement("div");
   totalDiv.className =
     "pt-3 border-t border-purple-800/60 flex justify-between items-center font-bold text-sm text-white";
+  const totalLabel = cart.some((item) => !item.isCustom)
+    ? `R ${grandTotal}`
+    : "Quote on request";
   totalDiv.innerHTML = `
                 <span>Estimated Total Inquiry:</span>
-                <span class="text-lg font-mono text-lime-400">R ${grandTotal}</span>
+                <span class="text-lg font-mono text-lime-400">${totalLabel}</span>
             `;
   container.appendChild(totalDiv);
 }
@@ -339,63 +359,43 @@ function submitOrderRequest(event) {
   }
 
   const name = document.getElementById("client-name").value;
-  const email = document.getElementById("client-email").value;
   const phone = document.getElementById("client-phone").value || "N/A";
   const address = document.getElementById("client-address").value;
   const notes = document.getElementById("client-notes").value || "None";
-
-  let summaryHTML = `
-                <div class="mb-3 border-b border-purple-800 pb-2">
-                    <strong class="text-white">Client:</strong> ${escapeHTML(name)}<br>
-                    <strong class="text-white">Email:</strong> ${escapeHTML(email)} | <strong class="text-white">Phone:</strong> ${escapeHTML(phone)}<br>
-                    <strong class="text-white">Address:</strong> ${escapeHTML(address)}
-                </div>
-                <div class="space-y-2">
-                    <strong class="text-pink-300 block">Requested Items:</strong>
-            `;
-
   let total = 0;
-  cart.forEach((item) => {
+  const requestedItems = cart.map((item) => {
     const sub = item.price * item.qty;
     total += sub;
-    summaryHTML += `
-                    <div class="flex justify-between text-xs py-1 border-b border-purple-900/40">
-                        <span>${item.qty}x ${escapeHTML(item.title)}</span>
-                        <span class="font-mono text-lime-400">R ${sub}</span>
-                    </div>
-                `;
+    return `${item.qty} x ${item.title} (${item.details})${
+      item.notes ? `\n  Commission details: ${item.notes}` : ""
+    }${item.isCustom ? "" : ` - R ${sub}`}`;
   });
 
-  summaryHTML += `
-                </div>
-                <div class="mt-3 pt-2 border-t border-purple-800 flex justify-between font-bold text-white text-sm">
-                    <span>Total Estimated Quote:</span>
-                    <span class="text-lime-400 font-mono">R ${total}</span>
-                </div>
-                <div class="mt-2 text-xs text-slate-400">
-                    <strong>Special Notes:</strong> ${escapeHTML(notes)}
-                </div>
-            `;
+  const whatsappNumber = (import.meta.env.VITE_WHATSAPP_NUMBER || "").replace(
+    /\D/g,
+    "",
+  );
+  if (!whatsappNumber) {
+    alert(
+      "WhatsApp orders are not configured yet. Set VITE_WHATSAPP_NUMBER in your .env file.",
+    );
+    return;
+  }
 
-  document.getElementById("invoice-summary").innerHTML = summaryHTML;
-
-  // Reset cart & close drawer
-  cart = [];
-  updateCartUI();
-  toggleCart();
-
-  // Reset checkout form
-  document.getElementById("checkout-form").reset();
-
-  // Show invoice modal
-  document.getElementById("invoice-modal").classList.remove("hidden");
-  document.getElementById("invoice-modal").classList.add("flex");
-}
-
-// Close Invoice Modal
-function closeInvoiceModal() {
-  document.getElementById("invoice-modal").classList.add("hidden");
-  document.getElementById("invoice-modal").classList.remove("flex");
+  const message = [
+    "Painting order request",
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Address: ${address}`,
+    "",
+    "Requested items:",
+    ...requestedItems,
+    total > 0 ? `Total estimate: R ${total}` : "Commission quote: requested",
+    `Order notes: ${notes}`,
+  ].join("\n");
+  window.location.assign(
+    `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`,
+  );
 }
 
 // Modal Quick View for Gallery Item
@@ -405,8 +405,8 @@ function openProductModal(id) {
 
   const modalContent = document.getElementById("product-modal-content");
   modalContent.innerHTML = `
-                <div class="h-64 sm:h-auto overflow-hidden">
-                    <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" class="w-full h-full object-cover">
+                <div class="h-80 sm:h-[70vh] sm:max-h-[600px] bg-brand-dark/60 overflow-hidden">
+                  <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" class="w-full h-full object-contain">
                 </div>
                 <div class="p-6 flex flex-col justify-between">
                     <div>
@@ -462,7 +462,6 @@ function showToast(message) {
 Object.assign(window, {
   addToCart,
   changeQty,
-  closeInvoiceModal,
   closeProductModal,
   filterGallery,
   handleCommissionSubmit,

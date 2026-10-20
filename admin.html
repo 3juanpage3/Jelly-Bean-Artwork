@@ -178,13 +178,9 @@
               </div>
               <div class="field">
                 <label for="painting-medium">Medium</label
-                ><input
-                  id="painting-medium"
-                  name="medium"
-                  maxlength="120"
-                  placeholder="Acrylic on canvas"
-                  required
-                />
+                ><select id="painting-medium" name="medium" required>
+                  <option value="Acrylic" selected>Acrylic</option>
+                </select>
               </div>
               <div class="field">
                 <label for="painting-price">Price (ZAR)</label
@@ -194,17 +190,6 @@
                   type="number"
                   min="0"
                   step="1"
-                  required
-                />
-              </div>
-              <div class="field">
-                <label for="painting-order">Display order</label
-                ><input
-                  id="painting-order"
-                  name="sort_order"
-                  type="number"
-                  step="1"
-                  value="0"
                   required
                 />
               </div>

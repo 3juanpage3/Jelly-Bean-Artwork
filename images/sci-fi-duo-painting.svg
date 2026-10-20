@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">The inventor and the jelly comet</title>
+  <desc id="desc">A hand-painted portrait of a curious space inventor beside a bright little alien, with a glowing portal behind them.</desc>
+  <defs>
+    <linearGradient id="sky" x2="0.9" y2="1">
+      <stop stop-color="#251145"/>
+      <stop offset=".58" stop-color="#513071"/>
+      <stop offset="1" stop-color="#e36b50"/>
+    </linearGradient>
+    <radialGradient id="portal">
+      <stop stop-color="#ffe9a8" stop-opacity=".96"/>
+      <stop offset=".54" stop-color="#ff9d68" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#fa408c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="coat" x2=".8" y2="1">
+      <stop stop-color="#36c8c0"/>
+      <stop offset="1" stop-color="#176b82"/>
+    </linearGradient>
+    <linearGradient id="skin" x2=".7" y2="1">
+      <stop stop-color="#f5c18f"/>
+      <stop offset="1" stop-color="#d67e69"/>
+    </linearGradient>
+    <linearGradient id="jelly" x2=".8" y2="1">
+      <stop stop-color="#f8ffb0"/>
+      <stop offset=".52" stop-color="#a6f071"/>
+      <stop offset="1" stop-color="#34c99a"/>
+    </linearGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .11"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="soft-light"/>
+    </filter>
+  </defs>
+  <g filter="url(#grain)">
+    <path fill="url(#sky)" d="M0 0h1200v800H0z"/>
+    <circle cx="830" cy="330" r="275" fill="url(#portal)" filter="url(#softGlow)"/>
+    <path d="M647 443c-44-108 18-235 132-267 104-30 220 30 242 126" fill="none" stroke="#ffb66d" stroke-width="20" stroke-linecap="round" opacity=".72"/>
+    <path d="M663 469c-42-111 33-232 139-254 86-18 177 24 211 94" fill="none" stroke="#ff5b9b" stroke-width="9" stroke-linecap="round" opacity=".82"/>
+    <path d="M720 135l12 27 29 4-21 20 5 29-25-14-26 14 6-29-21-20 29-4z" fill="#ffe6a4" opacity=".8"/>
+    <circle cx="1030" cy="164" r="7" fill="#fff0b2"/>
+    <circle cx="1083" cy="265" r="4" fill="#fff0b2"/>
+    <circle cx="599" cy="188" r="5" fill="#8ce8dc"/>
+    <path d="M0 625c158-55 297-49 416 7 147 68 286 44 404-18 148-78 267-70 380-21v207H0z" fill="#251d46"/>
+    <path d="M0 702c181-43 327-18 446 38 106 50 189 48 287 8 151-62 291-82 467-24v76H0z" fill="#17152f"/>
+
+    <!-- Original space inventor -->
+    <path d="M188 800c15-156 73-250 177-279l114 16c89 35 143 118 161 263z" fill="url(#coat)" stroke="#86e2d3" stroke-width="8"/>
+    <path d="M377 526l70 59 67-53 31 33-91 113-111-111z" fill="#f5d7a8"/>
+    <path d="M360 297c9-104 87-157 176-139 83 17 117 88 103 178l-19 110c-16 79-78 117-158 96-86-23-127-91-115-176z" fill="url(#skin)" stroke="#733b63" stroke-width="9"/>
+    <path d="M354 322c-20-111 38-203 139-221 72-13 137 21 165 77-51-16-88-7-117 20-34 31-80 42-138 33 9 28 5 54-13 80-12 17-25 24-36 11z" fill="#a95645" stroke="#552c57" stroke-width="12" stroke-linejoin="round"/>
+    <path d="M404 343c20-22 49-27 73-12M533 331c19-13 40-12 56 2" fill="none" stroke="#49304c" stroke-width="11" stroke-linecap="round"/>
+    <ellipse cx="450" cy="366" rx="13" ry="17" fill="#241e3d"/>
+    <ellipse cx="558" cy="359" rx="12" ry="16" fill="#241e3d"/>
+    <path d="M472 422c27 19 53 18 78-3" fill="none" stroke="#793c58" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="451" cy="366" r="37" fill="none" stroke="#d6b56e" stroke-width="9"/>
+    <circle cx="558" cy="359" r="35" fill="none" stroke="#d6b56e" stroke-width="9"/>
+    <path d="M488 361l31-2" stroke="#d6b56e" stroke-width="8"/>
+    <path d="M325 536l-38 176 106-75M567 549l83 154-112-55" fill="#40c4b2" stroke="#86e2d3" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M256 678l93 34-18 45-93-34zM594 686l75-40 22 42-75 41z" fill="#f6a35c"/>
+
+    <!-- Original jelly comet companion -->
+    <path d="M812 526c-27-49-21-102 14-139 33-36 85-45 127-20 46 28 61 84 40 132-15 34-41 56-78 68-31 10-67-1-103-41z" fill="url(#jelly)" stroke="#e5ffaf" stroke-width="9"/>
+    <path d="M825 528c-44 46-70 82-77 117 39-16 72-30 105-59" fill="none" stroke="#8df0c1" stroke-width="17" stroke-linecap="round"/>
+    <path d="M930 527c22 48 31 80 24 111-27-17-50-37-65-61" fill="none" stroke="#73e5b2" stroke-width="15" stroke-linecap="round"/>
+    <ellipse cx="866" cy="433" rx="10" ry="14" fill="#263956"/>
+    <ellipse cx="931" cy="431" rx="10" ry="14" fill="#263956"/>
+    <path d="M881 470c13 12 26 12 39 0" fill="none" stroke="#326a68" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="834" cy="390" r="8" fill="#fff8c9" opacity=".9"/>
+    <circle cx="964" cy="475" r="6" fill="#fff8c9" opacity=".8"/>
+    <path d="M1037 555c30-29 50-61 61-95M1030 573c40-6 76-22 106-47" fill="none" stroke="#ffcf79" stroke-width="8" stroke-linecap="round" opacity=".8"/>
+    <path d="M99 235l11 21 23 4-17 16 4 24-21-12-21 12 4-24-17-16 23-4z" fill="#ffcf79" opacity=".75"/>
+  </g>
+</svg>

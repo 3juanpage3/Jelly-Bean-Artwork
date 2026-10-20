@@ -117,7 +117,6 @@ async function loadPaintings() {
   const { data, error } = await supabase
     .from("paintings")
     .select("*")
-    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -210,7 +209,6 @@ function editPainting(painting) {
     dimensions: painting.dimensions,
     medium: painting.medium,
     price_zar: painting.price_zar,
-    sort_order: painting.sort_order,
     description: painting.description,
     image_alt: painting.image_alt,
   })) {
@@ -259,13 +257,8 @@ async function savePainting(event) {
   const formData = new FormData(elements.form);
   const file = formData.get("image");
   const price = Number(formData.get("price_zar"));
-  const sortOrder = Number(formData.get("sort_order"));
   if (!Number.isSafeInteger(price) || price < 0) {
     setFormMessage("Enter a non-negative whole-number price in ZAR.");
-    return;
-  }
-  if (!Number.isSafeInteger(sortOrder)) {
-    setFormMessage("Display order must be a whole number.");
     return;
   }
 
@@ -290,7 +283,6 @@ async function savePainting(event) {
       image_path: newImagePath || editingPainting?.image_path,
       image_alt: String(formData.get("image_alt")).trim(),
       status: formData.get("status"),
-      sort_order: sortOrder,
     };
 
     let result;

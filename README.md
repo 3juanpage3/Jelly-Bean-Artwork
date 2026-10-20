@@ -7,9 +7,9 @@ This repository contains the Jelly Bean Artwork storefront and an owner-only cat
 - `index.html`, `styles.css`, and `script.js` implement the storefront. The gallery reads available paintings from Supabase when configured; hardcoded sample paintings are no longer used.
 - `styles.min.css` is generated from `styles.css` with Tailwind CSS. Rebuild it with `npm run build:css` after changing styles or Tailwind classes.
 - `admin.html`, `admin.js`, and `admin.css` provide owner sign-in, catalogue listing, create/edit, archive/restore, permanent delete, and image upload/replacement.
-- `supabase/migrations/001_paintings.sql` defines the catalogue table, timestamp trigger, and owner-only database/Storage write policies. Replace its owner UUID placeholder before applying it.
+- `supabase/migrations/001_paintings.sql` defines the catalogue table, timestamp trigger, and owner-only database/Storage write policies. `002_remove_painting_sort_order.sql` restricts the medium to Acrylic and removes display order. Replace the owner UUID placeholder before applying migrations.
 - `vite.config.js` builds both pages into `dist/`; `npm run build` also regenerates the Tailwind CSS.
-- The cart and order confirmation currently run only in the browser. Customer information and orders are not submitted to a server, and there is no payment processing.
+- Checkout opens WhatsApp with a prefilled order message. The customer must send it in WhatsApp; orders are not stored on a server and there is no payment processing.
 - The Supabase project and Vercel deployment are not created/configured by this repository. Complete the setup below before using the admin page.
 
 The design keeps the storefront visual style, adds a separate owner-only admin page, and uses the same Supabase catalogue for admin management and public available paintings.
@@ -43,14 +43,13 @@ create table public.paintings (
   slug text unique not null,
   category text not null check (category in ('anime', 'nature', 'fantasy')),
   dimensions text not null check (char_length(dimensions) <= 80),
-  medium text not null check (char_length(medium) <= 120),
+  medium text not null check (medium = 'Acrylic'),
   description text not null check (char_length(description) <= 2000),
   price_zar integer not null check (price_zar >= 0),
   image_path text not null,
   image_alt text not null check (char_length(image_alt) between 1 and 250),
   status text not null default 'draft'
     check (status in ('draft', 'available', 'sold', 'archived')),
-  sort_order integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -138,7 +137,7 @@ The admin page includes:
 
 - Supabase Auth password sign-in/sign-out and session restoration. There is no hardcoded password, public registration, or privileged key in the client.
 - A configured owner UUID check plus an RLS-backed database access check before management controls are shown. RLS is authoritative.
-- Catalogue listing and create/edit/archive/restore/delete actions, including ZAR price, status, sort order, and artwork image.
+- Catalogue listing and create/edit/archive/restore/delete actions, including ZAR price, status, and artwork image.
 - JPEG, PNG, and WebP uploads up to 5 MB, with generated unique Storage paths. Configure Storage restrictions too; browser validation is not the security boundary.
 - Cleanup of a new upload if saving its database row fails. Image replacement updates the row before removing the previous image.
 - Confirmation before archiving or permanent deletion. Restore returns archived items to `draft`. If Storage cleanup after deletion fails, the page reports that the image needs manual removal.
@@ -152,9 +151,10 @@ Copy `.env.example` to `.env` and fill in the project values. `.env` is ignored 
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-publishable-or-anon-key
 VITE_OWNER_ID=the-owner-auth-user-uuid
+VITE_WHATSAPP_NUMBER=your-whatsapp-number-in-international-format
 ```
 
-Use the Supabase project URL and publishable key (or legacy anon key). `VITE_OWNER_ID` is browser-visible and is only a UI check, never a secret or a substitute for RLS. Do not use a service-role key here.
+Set `VITE_WHATSAPP_NUMBER` to the destination number using international digits only, without a plus sign or spaces. Use the Supabase project URL and publishable key (or legacy anon key). `VITE_OWNER_ID` is browser-visible and is only a UI check, never a secret or a substitute for RLS. Do not use a service-role key here.
 
 Run `npm install`, then `npm run dev` and visit `http://localhost:5173/admin.html`. To verify the production output locally, run `npm run build` followed by `npm run preview`.
 
@@ -173,7 +173,7 @@ For replacing an image, upload the replacement first, update the row, and only t
 
 ## Phase 4: Public Gallery Integration
 
-The storefront now uses the shared Supabase browser client and queries only public fields from rows with `status = 'available'`, ordered by `sort_order` and creation time. It builds artwork URLs from `image_path`, preserves category filters and quick view, and displays loading, empty, and failure states. Database-controlled titles, descriptions, alt text, and image URLs are escaped before rendering. Newly available admin entries appear after a storefront reload; realtime updates are not configured.
+The storefront now uses the shared Supabase browser client and queries only public fields from rows with `status = 'available'`, ordered by creation time. It builds artwork URLs from `image_path`, preserves category filters and quick view, and displays loading, empty, and failure states. Database-controlled titles, descriptions, alt text, and image URLs are escaped before rendering. Newly available admin entries appear after a storefront reload; realtime updates are not configured.
 
 Use `textContent` or DOM element creation for database/customer-controlled text. If a template string is used for HTML, escape every dynamic text and attribute value. Validate image URL/path construction and never accept arbitrary executable URLs from the admin form.
 

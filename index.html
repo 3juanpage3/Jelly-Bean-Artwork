@@ -201,8 +201,8 @@
               class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto md:mx-0 leading-relaxed font-light"
             >
               Welcome to Jelly Bean Artwork! Browse hand-painted original canvas
-              art or submit your dream custom design—from anime characters and
-              pop art to pets and fantasy portraits.
+              art or submit your dream custom design across anime, gaming,
+              fantasy, and cartoon subjects.
             </p>
 
             <div
@@ -407,14 +407,14 @@
               <!-- Step 1: Subject / Style -->
               <div>
                 <label class="block font-heading text-2xl text-pink-300 mb-3"
-                  >1. Select Art Subject / Style</label
+                  >1. Select Art Subject</label
                 >
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <label class="cursor-pointer">
                     <input
                       type="radio"
                       name="art_style"
-                      value="Anime & Gaming Character"
+                      value="Anime"
                       checked
                       class="peer sr-only"
                     />
@@ -422,32 +422,32 @@
                       class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 text-center peer-checked:border-pink-500 peer-checked:bg-pink-950/40 peer-checked:text-pink-300 transition-all hover:border-pink-500/50"
                     >
                       <i
-                        class="fa-solid fa-gamepad text-2xl mb-2 text-pink-400"
+                        class="fa-solid fa-wand-magic-sparkles text-2xl mb-2 text-pink-400"
                       ></i>
-                      <div class="text-sm font-semibold">Anime / Gaming</div>
+                      <div class="text-sm font-semibold">Anime</div>
                     </div>
                   </label>
                   <label class="cursor-pointer">
                     <input
                       type="radio"
                       name="art_style"
-                      value="Cute Pet Portrait"
+                      value="Gaming"
                       class="peer sr-only"
                     />
                     <div
                       class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 text-center peer-checked:border-teal-400 peer-checked:bg-teal-950/40 peer-checked:text-teal-300 transition-all hover:border-teal-400/50"
                     >
                       <i
-                        class="fa-solid fa-paw text-2xl mb-2 text-teal-400"
+                        class="fa-solid fa-gamepad text-2xl mb-2 text-teal-400"
                       ></i>
-                      <div class="text-sm font-semibold">Pet Portrait</div>
+                      <div class="text-sm font-semibold">Gaming</div>
                     </div>
                   </label>
                   <label class="cursor-pointer">
                     <input
                       type="radio"
                       name="art_style"
-                      value="Fantasy & Mythical"
+                      value="Fantasy"
                       class="peer sr-only"
                     />
                     <div
@@ -456,27 +456,23 @@
                       <i
                         class="fa-solid fa-dragon text-2xl mb-2 text-lime-400"
                       ></i>
-                      <div class="text-sm font-semibold">
-                        Fantasy / Original
-                      </div>
+                      <div class="text-sm font-semibold">Fantasy</div>
                     </div>
                   </label>
                   <label class="cursor-pointer">
                     <input
                       type="radio"
                       name="art_style"
-                      value="Stylized Portrait & Pop Art"
+                      value="Cartoon"
                       class="peer sr-only"
                     />
                     <div
                       class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 text-center peer-checked:border-yellow-400 peer-checked:bg-yellow-950/40 peer-checked:text-yellow-300 transition-all hover:border-yellow-400/50"
                     >
                       <i
-                        class="fa-solid fa-user-astronaut text-2xl mb-2 text-yellow-400"
+                        class="fa-solid fa-face-smile text-2xl mb-2 text-yellow-400"
                       ></i>
-                      <div class="text-sm font-semibold">
-                        Pop Art / Portrait
-                      </div>
+                      <div class="text-sm font-semibold">Cartoon</div>
                     </div>
                   </label>
                 </div>
@@ -487,27 +483,21 @@
                 <label class="block font-heading text-2xl text-teal-300 mb-3"
                   >2. Choose Canvas Size</label
                 >
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                >
                   <label class="cursor-pointer">
                     <input
                       type="radio"
                       name="canvas_size"
-                      value="Small (8x10 inch) - Est. R 75"
+                      value="Small (8 x 10 inch)"
                       checked
                       class="peer sr-only"
                     />
                     <div
                       class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 peer-checked:border-teal-400 peer-checked:bg-teal-950/30 transition-all"
                     >
-                      <div class="flex justify-between items-center">
-                        <span class="font-bold text-white"
-                          >Small (8" x 10")</span
-                        >
-                        <span
-                          class="text-xs bg-teal-900/60 text-teal-300 px-2 py-0.5 rounded font-mono"
-                          >Est. R 75</span
-                        >
-                      </div>
+                      <div class="font-bold text-white">Small (8" x 10")</div>
                       <p class="text-xs text-slate-400 mt-2">
                         Perfect for desk displays & cozy nooks.
                       </p>
@@ -517,21 +507,13 @@
                     <input
                       type="radio"
                       name="canvas_size"
-                      value="Medium (12x16 inch) - Est. R 140"
+                      value="Medium (12 x 16 inch)"
                       class="peer sr-only"
                     />
                     <div
                       class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 peer-checked:border-teal-400 peer-checked:bg-teal-950/30 transition-all"
                     >
-                      <div class="flex justify-between items-center">
-                        <span class="font-bold text-white"
-                          >Medium (12" x 16")</span
-                        >
-                        <span
-                          class="text-xs bg-teal-900/60 text-teal-300 px-2 py-0.5 rounded font-mono"
-                          >Est. R 140</span
-                        >
-                      </div>
+                      <div class="font-bold text-white">Medium (12" x 16")</div>
                       <p class="text-xs text-slate-400 mt-2">
                         Great focal piece for bedroom/office wall.
                       </p>
@@ -541,26 +523,48 @@
                     <input
                       type="radio"
                       name="canvas_size"
-                      value="Large (18x24 inch) - Est. R 230"
+                      value="Large (18 x 24 inch)"
                       class="peer sr-only"
                     />
                     <div
                       class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 peer-checked:border-teal-400 peer-checked:bg-teal-950/30 transition-all"
                     >
-                      <div class="flex justify-between items-center">
-                        <span class="font-bold text-white"
-                          >Large (18" x 24")</span
-                        >
-                        <span
-                          class="text-xs bg-teal-900/60 text-teal-300 px-2 py-0.5 rounded font-mono"
-                          >Est. R 230</span
-                        >
-                      </div>
+                      <div class="font-bold text-white">Large (18" x 24")</div>
                       <p class="text-xs text-slate-400 mt-2">
                         Statement centerpiece with high detail level.
                       </p>
                     </div>
                   </label>
+                  <label class="cursor-pointer">
+                    <input
+                      type="radio"
+                      name="canvas_size"
+                      value="custom"
+                      class="peer sr-only"
+                    />
+                    <div
+                      class="p-4 rounded-xl border border-purple-800/60 bg-brand-dark/60 peer-checked:border-teal-400 peer-checked:bg-teal-950/30 transition-all h-full"
+                    >
+                      <div class="font-bold text-white">Custom size</div>
+                      <p class="text-xs text-slate-400 mt-2">
+                        Enter your preferred dimensions.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+                <div id="custom-canvas-size-field" class="mt-4" hidden>
+                  <label
+                    for="custom-canvas-size"
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                    >Custom canvas dimensions</label
+                  >
+                  <input
+                    id="custom-canvas-size"
+                    type="text"
+                    placeholder='e.g. 20" x 30"'
+                    disabled
+                    class="w-full bg-brand-dark border border-purple-800 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-teal-400"
+                  />
                 </div>
               </div>
 
@@ -576,18 +580,7 @@
                     id="medium-select"
                     class="w-full bg-brand-dark border border-purple-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-lime-400"
                   >
-                    <option value="Acrylic on Gallery Wrapped Canvas">
-                      Acrylic on Gallery Wrapped Canvas
-                    </option>
-                    <option value="Vibrant Neon / Blacklight Acrylic">
-                      Vibrant Neon / Blacklight Acrylic
-                    </option>
-                    <option value="Mixed Media with Metallic Foil Highlights">
-                      Mixed Media with Metallic Foil Highlights
-                    </option>
-                    <option value="Watercolor & Ink Accent">
-                      Watercolor & Ink Accent
-                    </option>
+                    <option value="Acrylic" selected>Acrylic</option>
                   </select>
                 </div>
 
@@ -595,19 +588,17 @@
                   <label
                     for="budget-select"
                     class="block font-heading text-2xl text-yellow-300 mb-2"
-                    >4. Target Budget Range</label
+                    >4. Willing to pay for</label
                   >
-                  <select
+                  <input
                     id="budget-select"
+                    type="number"
+                    min="0"
+                    step="1"
+                    required
+                    placeholder="Enter amount in ZAR"
                     class="w-full bg-brand-dark border border-purple-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-yellow-400"
-                  >
-                    <option value="R 50 - R 100">R 50 - R 100</option>
-                    <option value="R 100 - R 200" selected>
-                      R 100 - R 200
-                    </option>
-                    <option value="R 200 - R 350">R 200 - R 350</option>
-                    <option value="R 350+">R 350+</option>
-                  </select>
+                  />
                 </div>
               </div>
 
@@ -632,8 +623,8 @@
                 type="submit"
                 class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-pink via-purple-600 to-brand-teal text-white font-bold text-lg shadow-xl shadow-purple-900/40 hover:opacity-95 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-3"
               >
-                <i class="fa-solid fa-cart-plus"></i>
-                <span>Add Custom Commission Request to Order Cart</span>
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>Submit Painting Order Request</span>
               </button>
             </div>
           </form>
@@ -651,8 +642,8 @@
               class="w-full h-96 rounded-3xl overflow-hidden gradient-border p-2 shadow-2xl"
             >
               <img
-                src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80"
-                alt="Artist at Canvas Work"
+                src="/images/sci-fi-duo-painting.svg"
+                alt="Hand-painted portrait of a space inventor and a jelly-like alien companion"
                 class="w-full h-full object-cover rounded-2xl"
                 loading="lazy"
                 decoding="async"
@@ -704,6 +695,8 @@
               <a
                 href="https://instagram.com"
                 target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
                 class="w-12 h-12 rounded-full bg-brand-card border border-purple-700/60 flex items-center justify-center text-pink-400 hover:text-white hover:bg-brand-pink transition-all"
               >
                 <i class="fa-brands fa-instagram text-xl"></i>
@@ -711,6 +704,8 @@
               <a
                 href="https://tiktok.com"
                 target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
                 class="w-12 h-12 rounded-full bg-brand-card border border-purple-700/60 flex items-center justify-center text-teal-400 hover:text-white hover:bg-brand-teal transition-all"
               >
                 <i class="fa-brands fa-tiktok text-xl"></i>
@@ -807,30 +802,16 @@
                   class="w-full bg-brand-dark border border-purple-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-pink-500"
                 />
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-xs text-slate-300 mb-1"
-                    >Email *</label
-                  >
-                  <input
-                    type="email"
-                    required
-                    id="client-email"
-                    placeholder="alex@example.com"
-                    class="w-full bg-brand-dark border border-purple-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-pink-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-300 mb-1"
-                    >Phone Number</label
-                  >
-                  <input
-                    type="tel"
-                    id="client-phone"
-                    placeholder="(555) 000-0000"
-                    class="w-full bg-brand-dark border border-purple-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-pink-500"
-                  />
-                </div>
+              <div>
+                <label class="block text-xs text-slate-300 mb-1"
+                  >Phone Number</label
+                >
+                <input
+                  type="tel"
+                  id="client-phone"
+                  placeholder="+27 82 123 4567"
+                  class="w-full bg-brand-dark border border-purple-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-pink-500"
+                />
               </div>
               <div>
                 <label class="block text-xs text-slate-300 mb-1"
@@ -876,7 +857,7 @@
       class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
     >
       <div
-        class="bg-brand-card border border-purple-700/50 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative glow-box"
+        class="bg-brand-card border border-purple-700/50 rounded-3xl max-w-5xl max-h-[90vh] w-full overflow-y-auto shadow-2xl relative glow-box"
       >
         <button
           onclick="closeProductModal()"
@@ -887,48 +868,6 @@
         <div id="product-modal-content" class="grid sm:grid-cols-2">
           <!-- Content dynamically populated -->
         </div>
-      </div>
-    </div>
-
-    <!-- Order Success Invoice Modal -->
-    <div
-      id="invoice-modal"
-      class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md"
-    >
-      <div
-        class="bg-brand-card border border-teal-500/50 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative glow-box text-center"
-      >
-        <div
-          class="w-16 h-16 bg-gradient-to-r from-teal-400 to-lime-400 rounded-full flex items-center justify-center text-slate-950 text-3xl mx-auto mb-4"
-        >
-          <i class="fa-solid fa-check"></i>
-        </div>
-        <h2 class="font-heading text-3xl text-white mb-1">
-          Order Request Sent!
-        </h2>
-        <p class="text-xs text-teal-300 font-semibold mb-4">
-          Inquiry Received by Jelly Bean Artwork
-        </p>
-
-        <div
-          class="bg-brand-dark rounded-2xl p-4 border border-purple-800/60 text-left text-xs text-slate-300 space-y-2 mb-6 max-h-60 overflow-y-auto"
-          id="invoice-summary"
-        >
-          <!-- Summary inserted here -->
-        </div>
-
-        <p class="text-xs text-slate-400 mb-6">
-          The artist will review your request, check painting availability, and
-          contact you via email shortly with exact shipping details and payment
-          invoice link!
-        </p>
-
-        <button
-          onclick="closeInvoiceModal()"
-          class="w-full py-3 rounded-xl bg-brand-pink hover:bg-pink-600 text-white font-bold text-sm transition-colors"
-        >
-          Back to Art Gallery
-        </button>
       </div>
     </div>
 
