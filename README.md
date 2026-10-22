@@ -7,6 +7,7 @@ This repository contains the Jelly Bean Artwork storefront and an owner-only cat
 - `index.html`, `styles.css`, and `script.js` implement the storefront. The gallery reads available paintings from Supabase when configured; hardcoded sample paintings are no longer used.
 - `styles.min.css` is generated from `styles.css` with Tailwind CSS. Rebuild it with `npm run build:css` after changing styles or Tailwind classes.
 - `admin.html`, `admin.js`, and `admin.css` provide owner sign-in, catalogue listing, create/edit, archive/restore, permanent delete, and image upload/replacement.
+- `supabase/migrations/004_add_second_catalogue_admin.sql` adds the second catalogue administrator to the existing painting and artwork Storage policies. Apply it after the second Auth user exists.
 - `privacy.html`, `copyright-policy.html`, and `terms.html` provide the linked visitor notices and artwork-use policy. Review the privacy notice whenever data collection, analytics, checkout, or third-party providers change; have sale terms reviewed before treating them as a complete consumer contract.
 - Gallery and quick-view images show a visible copyright overlay as a deterrent only. The browser still receives the image URL; use resized, watermarked preview files and keep full-resolution originals private if stronger practical protection is needed.
 - `supabase/migrations/001_paintings.sql` defines the catalogue table, timestamp trigger, and owner-only database/Storage write policies. `002_remove_painting_sort_order.sql` restricts the medium to Acrylic and removes display order. Replace the owner UUID placeholder before applying migrations.
@@ -33,7 +34,7 @@ A public Supabase URL and publishable/anon key can be used by the browser only a
 
 1. Create a Supabase project in the region appropriate for the owner and customers. Copy its project URL and publishable/anon key for local configuration and Vercel.
 2. In Supabase Auth, create the owner account directly and disable public sign-ups in project settings. The admin has no sign-up flow. Enable multi-factor authentication where available and secure the owner's email account.
-3. Record the owner's Supabase Auth user UUID. Use it for `VITE_OWNER_ID` and replace every `OWNER_AUTH_USER_UUID` in the checked-in migration before running it. Do not use an email address supplied by the browser as the authorization check.
+3. Record each catalogue administrator's Supabase Auth user UUID. Set the comma-separated UUID list in `VITE_OWNER_IDS`; the UUIDs in the database owner policies must match. Do not use an email address supplied by the browser as the authorization check.
 4. Copy `.env.example` to `.env`. The project URL and publishable/anon key are intentionally browser-visible; privileged keys stay server-side and must never be added to a `VITE_*` variable.
 
 ## Phase 2: Create the Catalogue Table and Policies
@@ -154,11 +155,13 @@ Copy `.env.example` to `.env` and fill in the project values. `.env` is ignored 
 ```env
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-publishable-or-anon-key
-VITE_OWNER_ID=the-owner-auth-user-uuid
+VITE_OWNER_IDS=owner-auth-user-uuid,second-owner-auth-user-uuid
 VITE_WHATSAPP_NUMBER=your-whatsapp-number-in-international-format
 ```
 
-Set `VITE_WHATSAPP_NUMBER` to the destination number using international digits only, without a plus sign or spaces. Use the Supabase project URL and publishable key (or legacy anon key). `VITE_OWNER_ID` is browser-visible and is only a UI check, never a secret or a substitute for RLS. Do not use a service-role key here.
+Set `VITE_WHATSAPP_NUMBER` to the destination number using international digits only, without a plus sign or spaces. Use the Supabase project URL and publishable key (or legacy anon key). `VITE_OWNER_IDS` is a comma-separated list of catalogue admin UUIDs; it is browser-visible and is only a UI check, never a secret or a substitute for RLS. Do not use a service-role key here.
+
+To add a catalogue admin after initial setup, invite/create their Supabase Auth account, apply the corresponding owner-access migration in `supabase/migrations`, add their UUID to `VITE_OWNER_IDS`, and redeploy. This grants catalogue administration only; it does not grant Supabase dashboard or organization access.
 
 Run `npm install`, then `npm run dev` and visit `http://localhost:5173/admin.html`. To verify the production output locally, run `npm run build` followed by `npm run preview`.
 
@@ -211,7 +214,7 @@ Use Supabase's local development tooling or a separate staging project for polic
 
 1. Commit and push the project to a GitHub repository. Confirm `.env` is not tracked; only `.env.example` belongs in Git.
 2. In Vercel, choose **Add New Project**, import the repository, and keep the project root at the repository root. Vercel detects Vite; set build command to `npm run build` and output directory to `dist` if they are not detected automatically.
-3. In Vercel **Project Settings → Environment Variables**, add `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_OWNER_ID` for Production. Add them to Preview/Development only if those deployments should use the same Supabase project. Redeploy after changing values because Vite embeds them during the build.
+3. In Vercel **Project Settings → Environment Variables**, add `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_OWNER_IDS` for Production. Set `VITE_OWNER_IDS` to the comma-separated UUIDs of authorized catalogue administrators. Add them to Preview/Development only if those deployments should use the same Supabase project. Redeploy after changing values because Vite embeds them during the build.
 4. Deploy, then open both the storefront URL and `/admin.html`. Sign in with the owner account. Test creating a draft and an available painting, then verify the uploaded image in Supabase Storage.
 5. In Supabase **Authentication → URL Configuration**, set the Site URL to the production Vercel/custom domain and add the exact local and production redirect URLs in use. Add preview URLs only if previews require Auth, and remove obsolete origins.
 6. Keep database RLS and Storage restrictions enabled. Never add a service-role key to Vercel frontend variables. The project URL and publishable/anon key may be sent to the browser only with RLS correctly configured.

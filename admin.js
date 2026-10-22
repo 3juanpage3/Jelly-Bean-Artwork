@@ -1,5 +1,5 @@
 import "./admin.css";
-import { isSupabaseConfigured, ownerId, supabase } from "./supabase-client.js";
+import { isSupabaseConfigured, ownerIds, supabase } from "./supabase-client.js";
 const elements = {
   configurationError: document.getElementById("configuration-error"),
   loginView: document.getElementById("login-view"),
@@ -135,10 +135,10 @@ async function handleSession(session) {
     return;
   }
 
-  if (session.user.id !== ownerId) {
+  if (!ownerIds.includes(session.user.id)) {
     supabase.auth.signOut().catch(() => {});
     showLogin(
-      "This signed-in account does not match VITE_OWNER_ID. Set it to the owner's Supabase Auth user UUID.",
+      "This signed-in account is not authorized to manage the catalogue. Check the configured catalogue admin UUIDs.",
     );
     return;
   }
@@ -161,7 +161,7 @@ async function handleSession(session) {
     if (checkId !== sessionCheckId) return;
     if (result.error) {
       showLogin(
-        `Could not verify owner access: ${result.error.message} Check that the paintings migration ran successfully and its owner UUID matches VITE_OWNER_ID.`,
+        `Could not verify owner access: ${result.error.message} Check that the owner policies include this account's UUID.`,
       );
       return;
     }
@@ -453,7 +453,7 @@ elements.rows.addEventListener("click", async (event) => {
   if (button.dataset.action === "delete") await deletePainting(painting);
 });
 
-if (!isSupabaseConfigured || !ownerId) {
+if (!isSupabaseConfigured || ownerIds.length === 0) {
   elements.configurationError.hidden = false;
 } else {
   elements.loginView.hidden = false;
