@@ -23,8 +23,71 @@ function escapeHTML(value) {
 // Initialize App
 window.addEventListener("load", async () => {
   updateCartUI();
-  await loadGallery();
+  await Promise.all([loadGallery(), loadReviews()]);
 });
+
+async function loadReviews() {
+  const status = document.getElementById("reviews-status");
+  const list = document.getElementById("reviews-list");
+  if (!isSupabaseConfigured) {
+    status.textContent = "Customer reviews are temporarily unavailable.";
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(
+      "artwork, display_name, painting_rating, service_rating, comment, created_at",
+    )
+    .eq("status", "published")
+    .eq("publication_consent", true)
+    .order("created_at", { ascending: false })
+    .limit(12);
+
+  if (error) {
+    console.error("Could not load customer reviews:", error);
+    status.textContent = "Customer reviews could not be loaded right now.";
+    return;
+  }
+
+  list.replaceChildren();
+  if (!data.length) {
+    status.textContent =
+      "No customer reviews have been published yet. If you have received your painting, you can be the first to share your feedback.";
+    return;
+  }
+
+  for (const review of data) {
+    const card = document.createElement("article");
+    card.className =
+      "rounded-2xl border border-purple-800/50 bg-brand-card/80 p-6";
+    const author = escapeHTML(review.display_name.trim() || "Customer");
+    const artwork = review.artwork
+      ? `<p class="mt-2 text-xs text-teal-300">${escapeHTML(review.artwork)}</p>`
+      : "";
+    const date = new Date(review.created_at).toLocaleDateString("en-ZA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+    card.innerHTML = `
+      <div class="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-white">${author}</h3>
+          ${artwork}
+        </div>
+        <time class="shrink-0 text-xs text-slate-400" datetime="${escapeHTML(review.created_at)}">${escapeHTML(date)}</time>
+      </div>
+      <p class="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-300">${escapeHTML(review.comment)}</p>
+      <div class="mt-5 grid grid-cols-2 gap-3 border-t border-purple-800/50 pt-4 text-xs">
+        <p class="text-slate-400">Painting <span class="ml-1 font-semibold text-pink-300" aria-label="${review.painting_rating} out of 5">${"★".repeat(review.painting_rating)}${"☆".repeat(5 - review.painting_rating)}</span></p>
+        <p class="text-slate-400">Service <span class="ml-1 font-semibold text-teal-300" aria-label="${review.service_rating} out of 5">${"★".repeat(review.service_rating)}${"☆".repeat(5 - review.service_rating)}</span></p>
+      </div>
+    `;
+    list.append(card);
+  }
+  status.textContent = `Showing ${data.length} recent customer review${data.length === 1 ? "" : "s"}.`;
+}
 
 function setGalleryStatus(message, isError = false) {
   const status = document.getElementById("gallery-status");

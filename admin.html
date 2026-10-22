@@ -242,6 +242,111 @@
             </button>
           </form>
         </section>
+
+        <section class="panel reviews-admin" aria-labelledby="reviews-admin-heading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">CUSTOMER FEEDBACK</p>
+              <h2 id="reviews-admin-heading">
+                Reviews <span id="review-count">0</span>
+              </h2>
+            </div>
+            <button id="refresh-reviews-button" class="button quiet" type="button">
+              Refresh reviews
+            </button>
+          </div>
+          <p class="review-guidance">
+            New reviews remain private until published. Only publish reviews
+            where the customer's publication consent is recorded.
+          </p>
+          <p id="review-empty-state" class="empty-state" hidden>
+            No review submissions yet.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Submitted</th>
+                  <th scope="col">Customer / artwork</th>
+                  <th scope="col">Ratings</th>
+                  <th scope="col">Comment</th>
+                  <th scope="col">Status</th>
+                  <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="review-rows"></tbody>
+            </table>
+          </div>
+
+          <form id="review-edit-form" class="review-editor" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">MODERATE REVIEW</p>
+                <h3 id="review-edit-heading">Edit review</h3>
+              </div>
+              <button
+                id="cancel-review-edit-button"
+                class="icon-button"
+                type="button"
+                aria-label="Close review editor"
+              >
+                ×
+              </button>
+            </div>
+            <div class="review-fields">
+              <div class="field">
+                <label for="review-edit-name">Display name</label>
+                <input id="review-edit-name" name="display_name" maxlength="80" />
+              </div>
+              <div class="field">
+                <label for="review-edit-artwork">Painting or commission</label>
+                <input id="review-edit-artwork" name="artwork" maxlength="120" />
+              </div>
+              <div class="field">
+                <label for="review-edit-painting">Painting rating</label>
+                <select id="review-edit-painting" name="painting_rating" required>
+                  <option value="1">1 out of 5</option>
+                  <option value="2">2 out of 5</option>
+                  <option value="3">3 out of 5</option>
+                  <option value="4">4 out of 5</option>
+                  <option value="5">5 out of 5</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="review-edit-service">Service rating</label>
+                <select id="review-edit-service" name="service_rating" required>
+                  <option value="1">1 out of 5</option>
+                  <option value="2">2 out of 5</option>
+                  <option value="3">3 out of 5</option>
+                  <option value="4">4 out of 5</option>
+                  <option value="5">5 out of 5</option>
+                </select>
+              </div>
+              <div class="field span-two">
+                <label for="review-edit-comment">Comment</label>
+                <textarea
+                  id="review-edit-comment"
+                  name="comment"
+                  maxlength="1200"
+                  minlength="1"
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+              <div class="field">
+                <label for="review-edit-status">Visibility</label>
+                <select id="review-edit-status" name="status" required>
+                  <option value="pending">Pending — private</option>
+                  <option value="published">Published — public</option>
+                  <option value="rejected">Rejected — private</option>
+                </select>
+              </div>
+            </div>
+            <p id="review-consent-note" class="review-guidance"></p>
+            <p id="review-edit-message" class="form-message" aria-live="polite"></p>
+            <button class="button primary" type="submit">Save review</button>
+          </form>
+        </section>
       </section>
 
       <footer>

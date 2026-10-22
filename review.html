@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en-ZA">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0f051d" />
+    <meta
+      name="description"
+      content="Share your feedback about your Jelly Bean Artwork painting and customer service."
+    />
+    <title>Rate Your Experience | Jelly Bean Artwork</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.min.css" />
+    <script type="module" src="/review.js"></script>
+  </head>
+  <body class="min-h-screen text-slate-200">
+    <header class="border-b border-purple-900/40 bg-brand-dark/80 px-4 py-5">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4">
+        <a href="/" class="font-heading text-xl text-pink-400"
+          >Jelly Bean Artwork</a
+        >
+        <a href="/#customer-reviews" class="text-sm text-teal-300 underline underline-offset-4"
+          >Back to customer reviews</a
+        >
+      </div>
+    </header>
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+      <p class="mb-3 text-xs font-bold uppercase tracking-widest text-teal-300">
+        Your feedback matters
+      </p>
+      <h1 class="font-heading text-4xl text-white sm:text-5xl">
+        Rate your painting and service
+      </h1>
+      <p class="mt-4 leading-relaxed text-slate-300">
+        Have you received your painting? Tell us what you think. New reviews are
+        checked by the artist before they appear on the website.
+      </p>
+
+      <form id="review-form" class="mt-8 space-y-6 rounded-2xl border border-purple-800/50 bg-brand-card p-6 sm:p-8">
+        <div>
+          <label for="review-artwork" class="mb-2 block text-sm font-semibold text-white">
+            Painting or commission <span class="text-slate-400">(optional)</span>
+          </label>
+          <input
+            id="review-artwork"
+            name="artwork"
+            type="text"
+            maxlength="120"
+            autocomplete="off"
+            class="w-full rounded-lg border border-purple-700 bg-brand-dark px-4 py-3 text-white"
+          />
+        </div>
+
+        <fieldset>
+          <legend class="mb-3 text-sm font-semibold text-white">
+            How would you rate the painting? <span aria-hidden="true" class="text-pink-300">*</span>
+          </legend>
+          <div class="flex flex-wrap gap-3">
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="painting_rating" value="1" required />
+              <span>1 — Poor</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="painting_rating" value="2" />
+              <span>2</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="painting_rating" value="3" />
+              <span>3 — Good</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="painting_rating" value="4" />
+              <span>4</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="painting_rating" value="5" />
+              <span>5 — Excellent</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="mb-3 text-sm font-semibold text-white">
+            How would you rate the service? <span aria-hidden="true" class="text-pink-300">*</span>
+          </legend>
+          <div class="flex flex-wrap gap-3">
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="service_rating" value="1" required />
+              <span>1 — Poor</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="service_rating" value="2" />
+              <span>2</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="service_rating" value="3" />
+              <span>3 — Good</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="service_rating" value="4" />
+              <span>4</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-purple-700 px-3 py-2">
+              <input type="radio" name="service_rating" value="5" />
+              <span>5 — Excellent</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="review-comment" class="mb-2 block text-sm font-semibold text-white">
+            Your comments <span aria-hidden="true" class="text-pink-300">*</span>
+          </label>
+          <textarea
+            id="review-comment"
+            name="comment"
+            rows="5"
+            minlength="1"
+            maxlength="1200"
+            required
+            class="w-full rounded-lg border border-purple-700 bg-brand-dark px-4 py-3 text-white"
+          ></textarea>
+          <p class="mt-2 text-xs text-slate-400">
+            Please do not include private contact, payment, or sensitive information.
+          </p>
+        </div>
+
+        <div>
+          <label for="review-name" class="mb-2 block text-sm font-semibold text-white">
+            Name to show with your review <span class="text-slate-400">(optional)</span>
+          </label>
+          <input
+            id="review-name"
+            name="display_name"
+            type="text"
+            maxlength="80"
+            autocomplete="name"
+            class="w-full rounded-lg border border-purple-700 bg-brand-dark px-4 py-3 text-white"
+          />
+        </div>
+
+        <label class="flex items-start gap-3 text-sm leading-relaxed text-slate-300">
+          <input
+            id="review-consent"
+            name="publication_consent"
+            type="checkbox"
+            required
+            class="mt-1"
+          />
+          <span>
+            I agree that Jelly Bean Artwork may publish my review and, if I
+            provided one, my display name on its website. My review will remain
+            private until it is approved. I can ask the artist to remove it
+            using the contact details in the
+            <a href="/privacy.html" class="text-teal-300 underline underline-offset-4">Privacy Notice</a>.
+          </span>
+        </label>
+
+        <p id="review-message" class="text-sm" role="status" aria-live="polite"></p>
+        <button
+          id="review-submit"
+          type="submit"
+          class="w-full rounded-full bg-gradient-to-r from-brand-pink to-purple-600 px-6 py-3 font-bold text-white disabled:opacity-60 sm:w-auto"
+        >
+          Submit review
+        </button>
+      </form>
+    </main>
+  </body>
+</html>

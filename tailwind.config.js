@@ -1,10 +1,12 @@
 module.exports = {
   content: [
     "./index.html",
+    "./review.html",
     "./privacy.html",
     "./copyright-policy.html",
     "./terms.html",
     "./script.js",
+    "./review.js",
   ],
   theme: {
     extend: {

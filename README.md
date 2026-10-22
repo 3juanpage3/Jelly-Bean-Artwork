@@ -5,13 +5,15 @@ This repository contains the Jelly Bean Artwork storefront and an owner-only cat
 ## Current State
 
 - `index.html`, `styles.css`, and `script.js` implement the storefront. The gallery reads available paintings from Supabase when configured; hardcoded sample paintings are no longer used.
+- The storefront displays the supplied “50+ Paintings Sold” milestone and up to 12 recent approved customer reviews. Customers can submit separate painting and service ratings at `/review.html`; reviews require publication consent and admin approval.
 - `styles.min.css` is generated from `styles.css` with Tailwind CSS. Rebuild it with `npm run build:css` after changing styles or Tailwind classes.
-- `admin.html`, `admin.js`, and `admin.css` provide owner sign-in, catalogue listing, create/edit, archive/restore, permanent delete, and image upload/replacement.
+- `admin.html`, `admin.js`, and `admin.css` provide owner sign-in, catalogue listing, create/edit, archive/restore, permanent delete, image upload/replacement, and review moderation/editing.
 - `supabase/migrations/004_add_second_catalogue_admin.sql` adds the second catalogue administrator to the existing painting and artwork Storage policies. Apply it after the second Auth user exists.
+- `supabase/migrations/005_customer_reviews.sql` creates the moderated reviews table and restricts review management to the two configured catalogue admins. Apply it in the Supabase SQL Editor after confirming its admin UUIDs match `VITE_OWNER_IDS`.
 - `privacy.html`, `copyright-policy.html`, and `terms.html` provide the linked visitor notices and artwork-use policy. Review the privacy notice whenever data collection, analytics, checkout, or third-party providers change; have sale terms reviewed before treating them as a complete consumer contract.
 - Gallery and quick-view images show a visible copyright overlay as a deterrent only. The browser still receives the image URL; use resized, watermarked preview files and keep full-resolution originals private if stronger practical protection is needed.
 - `supabase/migrations/001_paintings.sql` defines the catalogue table, timestamp trigger, and owner-only database/Storage write policies. `002_remove_painting_sort_order.sql` restricts the medium to Acrylic and removes display order. Replace the owner UUID placeholder before applying migrations.
-- `vite.config.js` builds the storefront, admin, and policy pages into `dist/`; `npm run build` also regenerates the Tailwind CSS.
+- `vite.config.js` builds the storefront, admin, review, and policy pages into `dist/`; `npm run build` also regenerates the Tailwind CSS.
 - Checkout opens WhatsApp with a prefilled order message. The customer must send it in WhatsApp; orders are not stored on a server and there is no payment processing.
 - The checkout form explains which details are placed in the WhatsApp draft and links to WhatsApp's privacy policy. Review the notice if the checkout fields or order flow change.
 - `vercel.json` applies baseline security headers and a restrictive Content Security Policy to the storefront, admin, and policy pages. The policy permits only same-origin scripts; the explicitly used Google Fonts, Font Awesome CDN, Unsplash, and Supabase hosts are allowlisted. HSTS is provided by Vercel for the production domain. Recheck the CSP if adding external providers, inline scripts/styles, analytics, or a custom Supabase domain.
@@ -27,6 +29,7 @@ The design keeps the storefront visual style, adds a separate owner-only admin p
 - **Images:** Supabase Storage bucket named `artwork`. Store the image path in the database, not a temporary browser URL.
 - **Authorization:** PostgreSQL row-level security (RLS) and Storage policies must enforce owner-only writes. Hiding the admin page or checking a role only in JavaScript is not security.
 - **Public catalogue:** Storefront queries only rows whose status is `available`; the returned rows become the gallery cards.
+- **Customer reviews:** Public visitors can submit consented reviews, but submissions remain pending. Public reads expose only published, consented reviews; catalogue admins can inspect all submissions and edit, publish, hide, or delete them.
 
 A public Supabase URL and publishable/anon key can be used by the browser only after RLS is enabled and tested. Never place a service-role key, database password, or other privileged secret in `index.html`, `script.js`, a `VITE_*` variable, or any other browser-delivered file.
 
@@ -90,6 +93,16 @@ on public.paintings for delete
 to authenticated
 using (auth.uid() = 'OWNER_AUTH_USER_UUID'::uuid);
 ```
+
+After the painting policies and both catalogue-admin accounts are configured,
+apply `supabase/migrations/005_customer_reviews.sql` once in the Supabase SQL
+Editor. Confirm the two UUIDs in its admin policies match `VITE_OWNER_IDS`.
+The migration grants anonymous visitors permission to submit review rows, but
+RLS keeps those rows private until an authorized admin publishes them with the
+customer's consent. This direct public submission endpoint does not implement
+server-side rate limiting or CAPTCHA; moderation prevents unreviewed comments
+from appearing, but a separate abuse-control layer should be added if spam
+becomes a problem or before the feature is promoted widely.
 
 Postgres policies for the same operation are permissive by default and combine with OR. In this example the public policy exposes only available records, while the authenticated-owner policy also permits the owner to see drafts. Confirm the generated policies in Supabase and test as both an anonymous visitor and a non-owner authenticated user.
 
@@ -182,6 +195,8 @@ For replacing an image, upload the replacement first, update the row, and only t
 
 The storefront now uses the shared Supabase browser client and queries only public fields from rows with `status = 'available'`, ordered by creation time. It builds artwork URLs from `image_path`, preserves category filters and quick view, and displays loading, empty, and failure states. Database-controlled titles, descriptions, alt text, and image URLs are escaped before rendering. Newly available admin entries appear after a storefront reload; realtime updates are not configured.
 
+The customer review page is `/review.html`; customers can be sent that link after receiving an order. There is no automated post-delivery message. The homepage shows only the newest 12 reviews whose status is `published` and whose publication consent is true. The “50+ Paintings Sold” text is a manually supplied business milestone, not a count calculated from catalogue records.
+
 Use `textContent` or DOM element creation for database/customer-controlled text. If a template string is used for HTML, escape every dynamic text and attribute value. Validate image URL/path construction and never accept arbitrary executable URLs from the admin form.
 
 ## Phase 5: Price and Catalogue Rules
@@ -198,6 +213,9 @@ Use `textContent` or DOM element creation for database/customer-controlled text.
 Test these cases before deploying:
 
 - Anonymous visitors can read only paintings with `status = 'available'`.
+- Anonymous visitors can submit reviews, but cannot read pending/rejected reviews or edit/delete submissions.
+- Only the two authorized catalogue admins can read the full moderation queue, edit reviews, publish consented reviews, hide published reviews, and delete submissions.
+- Publishing is blocked unless the review has recorded publication consent; verify an unconsented review remains private.
 - Anonymous visitors cannot insert, update, or delete database rows or upload/delete Storage objects.
 - A second authenticated account that is not the owner cannot manage catalogue data or files.
 - The owner can create, edit price/details/image, set status, archive, restore, and delete.

@@ -225,7 +225,7 @@
 
             <!-- Highlight Badges -->
             <div
-              class="grid grid-cols-3 gap-4 pt-6 border-t border-purple-800/30 text-center"
+              class="grid grid-cols-2 gap-4 pt-6 border-t border-purple-800/30 text-center"
             >
               <div>
                 <div
@@ -234,6 +234,14 @@
                   100% Hand-Painted
                 </div>
                 <div class="text-xs text-slate-400">Acrylic on Canvas</div>
+              </div>
+              <div>
+                <div
+                  class="text-2xl font-bold text-lime-400 font-heading tracking-wide"
+                >
+                  50+ Paintings Sold
+                </div>
+                <div class="text-xs text-slate-400">Thank you for your support</div>
               </div>
               <div>
                 <div
@@ -732,6 +740,52 @@
           </div>
         </div>
       </section>
+
+      <section
+        id="customer-reviews"
+        class="px-4 py-20 border-t border-purple-900/30"
+        aria-labelledby="reviews-heading"
+      >
+        <div class="max-w-7xl mx-auto">
+          <div
+            class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8"
+          >
+            <div>
+              <p class="text-xs font-bold uppercase tracking-widest text-teal-300">
+                CUSTOMER FEEDBACK
+              </p>
+              <h2
+                id="reviews-heading"
+                class="font-heading text-4xl sm:text-5xl text-white mt-2"
+              >
+                Words from our customers
+              </h2>
+              <p class="text-sm text-slate-400 mt-3">
+                Reviews are shared here only after the customer gives consent
+                and the artist approves them.
+              </p>
+            </div>
+            <a
+              href="/review.html"
+              class="inline-flex justify-center px-6 py-3 rounded-full bg-gradient-to-r from-brand-pink to-purple-600 text-white font-bold text-sm shadow-lg"
+            >
+              Rate your painting and service
+            </a>
+          </div>
+          <p
+            id="reviews-status"
+            class="text-sm text-slate-400"
+            role="status"
+            aria-live="polite"
+          >
+            Loading customer reviews...
+          </p>
+          <div
+            id="reviews-list"
+            class="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
+          ></div>
+        </div>
+      </section>
     </main>
 
     <!-- Cart Slide-over Drawer / Order Submission Modal -->
@@ -943,6 +997,11 @@
               href="/terms.html"
               class="hover:text-teal-300 underline underline-offset-4"
               >Terms &amp; Conditions</a
+            >
+            <a
+              href="/review.html"
+              class="hover:text-teal-300 underline underline-offset-4"
+              >Rate your experience</a
             >
           </nav>
           <p>&copy; 2026 Jelly Bean Artwork. All rights reserved.</p>

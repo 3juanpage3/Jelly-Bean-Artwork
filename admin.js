@@ -20,10 +20,22 @@ const elements = {
   imageInput: document.getElementById("painting-image"),
   imagePreview: document.getElementById("image-preview"),
   imageRequiredNote: document.getElementById("image-required-note"),
+  reviewRows: document.getElementById("review-rows"),
+  reviewCount: document.getElementById("review-count"),
+  reviewEmptyState: document.getElementById("review-empty-state"),
+  refreshReviewsButton: document.getElementById("refresh-reviews-button"),
+  reviewEditForm: document.getElementById("review-edit-form"),
+  reviewEditHeading: document.getElementById("review-edit-heading"),
+  cancelReviewEditButton: document.getElementById("cancel-review-edit-button"),
+  reviewEditMessage: document.getElementById("review-edit-message"),
+  reviewConsentNote: document.getElementById("review-consent-note"),
+  reviewEditStatus: document.getElementById("review-edit-status"),
 };
 
 let paintings = [];
+let reviews = [];
 let editingPainting = null;
+let editingReview = null;
 let previewObjectUrl = null;
 let sessionCheckId = 0;
 
@@ -102,6 +114,51 @@ function renderPaintings() {
   }
 }
 
+function renderReviews() {
+  elements.reviewRows.replaceChildren();
+  elements.reviewCount.textContent = String(reviews.length);
+  elements.reviewEmptyState.hidden = reviews.length !== 0;
+
+  for (const review of reviews) {
+    const row = document.createElement("tr");
+    const submittedAt = new Date(review.created_at).toLocaleDateString(
+      "en-ZA",
+      { year: "numeric", month: "short", day: "numeric" },
+    );
+    appendCell(row, submittedAt);
+    appendCell(
+      row,
+      [review.display_name || "Customer", review.artwork]
+        .filter(Boolean)
+        .join(" · "),
+    );
+    appendCell(
+      row,
+      `Painting ${review.painting_rating}/5 · Service ${review.service_rating}/5`,
+    );
+    const commentCell = appendCell(row, review.comment);
+    commentCell.className = "review-comment-cell";
+    const status = document.createElement("span");
+    status.className = `badge review-${review.status}`;
+    status.textContent = review.status;
+    appendCell(row, status);
+
+    const actions = document.createElement("div");
+    actions.className = "row-actions";
+    actions.append(
+      createActionButton("Edit", "edit-review", review.id),
+      createActionButton(
+        review.status === "published" ? "Hide" : "Publish",
+        review.status === "published" ? "hide-review" : "publish-review",
+        review.id,
+      ),
+      createActionButton("Delete", "delete-review", review.id, true),
+    );
+    appendCell(row, actions);
+    elements.reviewRows.append(row);
+  }
+}
+
 function createActionButton(label, action, id, danger = false) {
   const button = document.createElement("button");
   button.type = "button";
@@ -125,6 +182,20 @@ async function loadPaintings() {
   }
   paintings = data;
   renderPaintings();
+}
+
+async function loadReviews() {
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    setPageMessage(`Could not load customer reviews: ${error.message}`, true);
+    return;
+  }
+  reviews = data;
+  renderReviews();
 }
 
 async function handleSession(session) {
@@ -178,7 +249,7 @@ async function handleSession(session) {
   if (checkId !== sessionCheckId) return;
   elements.loginView.hidden = true;
   elements.adminView.hidden = false;
-  await loadPaintings();
+  await Promise.all([loadPaintings(), loadReviews()]);
 }
 
 function resetEditor() {
@@ -219,6 +290,139 @@ function editPainting(painting) {
   setFormMessage("");
   elements.form.hidden = false;
   elements.form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function resetReviewEditor() {
+  editingReview = null;
+  elements.reviewEditForm.reset();
+  elements.reviewEditForm.hidden = true;
+  elements.reviewEditStatus.querySelector(
+    'option[value="published"]',
+  ).disabled = false;
+  elements.reviewEditMessage.textContent = "";
+  elements.reviewConsentNote.textContent = "";
+}
+
+function editReview(review) {
+  editingReview = review;
+  elements.reviewEditForm.reset();
+  elements.reviewEditHeading.textContent = `Review from ${
+    review.display_name || "Customer"
+  }`;
+  elements.reviewEditForm.elements.display_name.value = review.display_name;
+  elements.reviewEditForm.elements.artwork.value = review.artwork;
+  elements.reviewEditForm.elements.painting_rating.value =
+    String(review.painting_rating);
+  elements.reviewEditForm.elements.service_rating.value =
+    String(review.service_rating);
+  elements.reviewEditForm.elements.comment.value = review.comment;
+  elements.reviewEditStatus.value = review.status;
+  const publishOption = elements.reviewEditStatus.querySelector(
+    'option[value="published"]',
+  );
+  publishOption.disabled = !review.publication_consent;
+  elements.reviewConsentNote.textContent = review.publication_consent
+    ? "The customer agreed to publication. Their name is shown only if provided."
+    : "The customer did not provide publication consent. This review cannot be published.";
+  elements.reviewEditMessage.textContent = "";
+  elements.reviewEditForm.hidden = false;
+  elements.reviewEditForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function saveReview(event) {
+  event.preventDefault();
+  if (!editingReview) return;
+  const formData = new FormData(elements.reviewEditForm);
+  const status = String(formData.get("status"));
+  if (status === "published" && !editingReview.publication_consent) {
+    elements.reviewEditMessage.textContent =
+      "This review cannot be published without the customer's recorded consent.";
+    return;
+  }
+
+  const comment = String(formData.get("comment")).trim();
+  if (!comment) {
+    elements.reviewEditMessage.textContent = "A review comment is required.";
+    return;
+  }
+
+  const saveButton = elements.reviewEditForm.querySelector(
+    'button[type="submit"]',
+  );
+  saveButton.disabled = true;
+  elements.reviewEditMessage.textContent = "Saving review...";
+  try {
+    const { error } = await supabase
+      .from("reviews")
+      .update({
+        display_name: String(formData.get("display_name")).trim(),
+        artwork: String(formData.get("artwork")).trim(),
+        painting_rating: Number(formData.get("painting_rating")),
+        service_rating: Number(formData.get("service_rating")),
+        comment,
+        status,
+      })
+      .eq("id", editingReview.id);
+    if (error) throw error;
+
+    resetReviewEditor();
+    await loadReviews();
+    setPageMessage(
+      status === "published"
+        ? "Review saved and published."
+        : status === "rejected"
+          ? "Review saved and rejected."
+          : "Review saved as private.",
+    );
+  } catch (error) {
+    elements.reviewEditMessage.textContent =
+      `Could not save the review: ${error.message}`;
+  } finally {
+    saveButton.disabled = false;
+  }
+}
+
+async function changeReviewStatus(review, status) {
+  if (status === "published" && !review.publication_consent) {
+    setPageMessage(
+      "This review cannot be published because the customer has not given publication consent.",
+      true,
+    );
+    return;
+  }
+  const confirmation =
+    status === "published"
+      ? "Publish this review on the public website?"
+      : "Hide this review from the public website?";
+  if (!window.confirm(confirmation)) return;
+
+  const { error } = await supabase
+    .from("reviews")
+    .update({ status })
+    .eq("id", review.id);
+  if (error) {
+    setPageMessage(`Could not update review status: ${error.message}`, true);
+    return;
+  }
+  await loadReviews();
+  setPageMessage(
+    status === "published" ? "Review published." : "Review hidden from the website.",
+  );
+}
+
+async function deleteReview(review) {
+  if (!window.confirm("Permanently delete this customer review?")) return;
+  const { error } = await supabase
+    .from("reviews")
+    .delete()
+    .eq("id", review.id);
+  if (error) {
+    setPageMessage(`Could not delete the review: ${error.message}`, true);
+    return;
+  }
+  if (editingReview?.id === review.id) resetReviewEditor();
+  await loadReviews();
+  setPageMessage("Review deleted.");
 }
 
 function validateImage(file) {
@@ -417,6 +621,9 @@ elements.newButton.addEventListener("click", () => {
 });
 elements.cancelButton.addEventListener("click", resetEditor);
 elements.form.addEventListener("submit", savePainting);
+elements.reviewEditForm.addEventListener("submit", saveReview);
+elements.cancelReviewEditButton.addEventListener("click", resetReviewEditor);
+elements.refreshReviewsButton.addEventListener("click", loadReviews);
 elements.imageInput.addEventListener("change", () => {
   const file = elements.imageInput.files[0];
   if (!file) return;
@@ -431,6 +638,19 @@ elements.imageInput.addEventListener("change", () => {
     elements.imageInput.value = "";
     setFormMessage(error.message);
   }
+});
+
+elements.reviewRows.addEventListener("click", async (event) => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  const review = reviews.find((item) => item.id === button.dataset.id);
+  if (!review) return;
+  if (button.dataset.action === "edit-review") editReview(review);
+  if (button.dataset.action === "publish-review")
+    await changeReviewStatus(review, "published");
+  if (button.dataset.action === "hide-review")
+    await changeReviewStatus(review, "pending");
+  if (button.dataset.action === "delete-review") await deleteReview(review);
 });
 
 elements.rows.addEventListener("click", async (event) => {
