@@ -210,16 +210,15 @@ function handleCommissionSubmit(event) {
     selectedSize === "custom"
       ? `Custom (${document.getElementById("custom-canvas-size").value.trim()})`
       : selectedSize;
-  const medium = document.getElementById("medium-select").value;
-  const budget = document.getElementById("budget-select").value;
+  const medium = document.getElementById("medium-used").value.trim();
   const desc = document.getElementById("commission-desc").value;
 
   const customItem = {
     id: "custom-" + Date.now(),
     title: `Custom Art Request: ${style}`,
     price: 0,
-    details: `Size: ${size} | Medium: ${medium} | Willing to pay: R ${budget}`,
-    notes: desc,
+    details: `Size: ${size} | Medium used: ${medium} | Quote sent by artist; 50% upfront deposit required before design work begins.`,
+    notes: `${desc}\n\nReference photos are for inspiration and guidance only. The finished painting will be an original interpretation and will not look exactly like any reference. Attach reference photos directly in WhatsApp after this enquiry opens, if applicable.`,
     qty: 1,
     isCustom: true,
     image:

@@ -187,7 +187,8 @@ Use `textContent` or DOM element creation for database/customer-controlled text.
 ## Phase 5: Price and Catalogue Rules
 
 - Store price as an integer `price_zar` to avoid floating-point currency rounding. Format it for display with `Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' })` or the existing `R 185` style consistently.
-- Keep the custom commission estimate logic distinct from product prices; commission quotes should be clearly estimates, not authoritative payment totals.
+- Custom commission enquiries request a quote from the artist; do not collect a customer budget. A 50% upfront deposit is required before design work starts, with payment arranged directly with the artist outside this website.
+- Reference photos are attached by the customer directly in WhatsApp if they choose; the website does not upload or store them. They are guidance only and the final painting is an original interpretation, not an exact copy.
 - Decide what `sold` means for browsing and ordering. Usually sold paintings can be hidden from the buyable gallery or shown in a separate sold/portfolio view.
 - Confirm whether archiving hides an item immediately and whether restoring it makes it available again.
 - Keep a record of product IDs in cart entries. Before accepting a real order, re-fetch current price and availability on the server; never trust price values stored in a browser cart.

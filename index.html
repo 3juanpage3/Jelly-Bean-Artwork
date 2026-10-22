@@ -250,7 +250,7 @@
                   Direct Request
                 </div>
                 <div class="text-xs text-slate-400">
-                  No Upfront Payment Required
+                  50% Deposit Before Design
                 </div>
               </div>
             </div>
@@ -573,46 +573,29 @@
                 </div>
               </div>
 
-              <!-- Step 3: Medium & Color Palette -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label
-                    for="medium-select"
-                    class="block font-heading text-2xl text-lime-300 mb-2"
-                    >3. Preferred Medium</label
-                  >
-                  <select
-                    id="medium-select"
-                    class="w-full bg-brand-dark border border-purple-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-lime-400"
-                  >
-                    <option value="Acrylic" selected>Acrylic</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    for="budget-select"
-                    class="block font-heading text-2xl text-yellow-300 mb-2"
-                    >4. Willing to pay for</label
-                  >
-                  <input
-                    id="budget-select"
-                    type="number"
-                    min="0"
-                    step="1"
-                    required
-                    placeholder="Enter amount in ZAR"
-                    class="w-full bg-brand-dark border border-purple-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-yellow-400"
-                  />
-                </div>
+              <!-- Step 3: Medium used -->
+              <div>
+                <label
+                  for="medium-used"
+                  class="block font-heading text-2xl text-lime-300 mb-2"
+                  >3. Medium Used</label
+                >
+                <input
+                  id="medium-used"
+                  type="text"
+                  value="Acrylic"
+                  required
+                  maxlength="80"
+                  class="w-full bg-brand-dark border border-purple-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-lime-400"
+                />
               </div>
 
-              <!-- Step 4: Description & Reference details -->
+              <!-- Step 4: Description -->
               <div>
                 <label
                   for="commission-desc"
                   class="block font-heading text-2xl text-pink-300 mb-2"
-                  >5. Describe Your Idea & Reference Notes</label
+                  >4. Describe Your Idea</label
                 >
                 <textarea
                   id="commission-desc"
@@ -622,6 +605,30 @@
                   class="w-full bg-brand-dark border border-purple-800 rounded-xl p-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-pink-400 transition-colors"
                 ></textarea>
               </div>
+
+              <div
+                class="rounded-xl border border-teal-500/30 bg-teal-950/30 p-4"
+              >
+                <h3 class="font-heading text-xl text-teal-300">
+                  5. Reference Photos
+                </h3>
+                <p class="mt-2 text-sm leading-relaxed text-slate-300">
+                  Reference photos are used for inspiration and guidance only.
+                  Your painting will be an original interpretation and will
+                  not look exactly like the reference. If you have photos to
+                  share, attach them directly in WhatsApp after the enquiry
+                  opens.
+                </p>
+              </div>
+
+              <p
+                class="rounded-xl border border-yellow-500/30 bg-yellow-950/20 p-4 text-sm leading-relaxed text-slate-300"
+              >
+                The artist will send you a quote. A 50% upfront deposit is
+                required before design work begins. Payment is arranged
+                directly with the artist; this website does not process
+                payments.
+              </p>
 
               <!-- Submit Commission to Cart -->
               <button
@@ -784,9 +791,10 @@
                 <i class="fa-solid fa-circle-info"></i> Direct Inquiry Mode
               </div>
               <p class="text-xs text-slate-300 mt-1">
-                No online payment required now! Submitting sends your order
-                details directly to the artist to confirm availability &
-                delivery info.
+                Submitting opens a WhatsApp enquiry for the artist to confirm
+                availability, delivery details, and any quote. Custom
+                commissions require a 50% upfront deposit before design work
+                begins; payment is arranged directly with the artist.
               </p>
             </div>
 
