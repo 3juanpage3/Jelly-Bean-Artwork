@@ -145,7 +145,7 @@
 
         <!-- Cart Trigger Button -->
         <button
-          onclick="toggleCart()"
+          data-cart-toggle
           class="relative bg-gradient-to-r from-brand-pink to-brand-violet hover:from-pink-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-full font-medium flex items-center gap-2.5 shadow-lg shadow-pink-900/30 transition-all duration-300 hover:scale-105 active:scale-95"
         >
           <i class="fa-solid fa-palette text-yellow-300"></i>
@@ -331,31 +331,31 @@
             id="filter-buttons"
           >
             <button
-              onclick="filterGallery('all', event)"
+              data-gallery-filter="all"
               class="filter-btn active-filter px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-pink text-white border border-pink-400/30"
             >
               All Work
             </button>
             <button
-              onclick="filterGallery('anime', event)"
+              data-gallery-filter="anime"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Anime
             </button>
             <button
-              onclick="filterGallery('gaming', event)"
+              data-gallery-filter="gaming"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Gaming
             </button>
             <button
-              onclick="filterGallery('fantasy', event)"
+              data-gallery-filter="fantasy"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Fantasy
             </button>
             <button
-              onclick="filterGallery('cartoon', event)"
+              data-gallery-filter="cartoon"
               class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-brand-card hover:bg-purple-900/50 text-slate-300 border border-purple-800/40"
             >
               Cartoon
@@ -406,7 +406,6 @@
           <!-- Interactive Form Card -->
           <form
             id="commission-form"
-            onsubmit="handleCommissionSubmit(event)"
             class="bg-brand-card/90 rounded-3xl p-6 sm:p-10 border border-purple-700/40 shadow-2xl relative glow-box"
           >
             <div class="space-y-8">
@@ -736,7 +735,7 @@
       <!-- Backdrop -->
       <div
         id="cart-backdrop"
-        onclick="toggleCart()"
+        data-cart-backdrop
         class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
       ></div>
 
@@ -758,7 +757,7 @@
                 </h2>
               </div>
               <button
-                onclick="toggleCart()"
+                data-cart-toggle
                 class="text-slate-400 hover:text-white p-2 text-xl"
               >
                 <i class="fa-solid fa-xmark"></i>
@@ -793,7 +792,6 @@
 
             <form
               id="checkout-form"
-              onsubmit="submitOrderRequest(event)"
               class="space-y-3"
             >
               <div>
@@ -851,6 +849,26 @@
                 <i class="fa-solid fa-paper-plane"></i>
                 <span>Submit Painting Order Request</span>
               </button>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                This opens WhatsApp with a draft containing your contact and
+                order details. Review it before sending; nothing is sent until
+                you press Send in WhatsApp. If you send it, the artist receives
+                your details. See our
+                <a
+                  href="/privacy.html"
+                  class="text-teal-300 underline hover:text-teal-200"
+                  >Privacy Notice</a
+                >
+                and WhatsApp's
+                <a
+                  href="https://www.whatsapp.com/legal/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-teal-300 underline hover:text-teal-200"
+                  >Privacy Policy</a
+                >
+                applies. Please don't include sensitive information.
+              </p>
             </form>
           </div>
         </div>
@@ -866,7 +884,7 @@
         class="bg-brand-card border border-purple-700/50 rounded-3xl max-w-5xl max-h-[90vh] w-full overflow-y-auto shadow-2xl relative glow-box"
       >
         <button
-          onclick="closeProductModal()"
+          data-close-product-modal
           class="absolute top-4 right-4 z-10 bg-brand-dark/80 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center"
         >
           <i class="fa-solid fa-xmark"></i>
@@ -901,7 +919,26 @@
           >
           <span>• Hand-Painted Canvas Creations</span>
         </div>
-        <div>&copy; 2026 Jelly Bean Artwork. All custom rights reserved.</div>
+        <div class="flex flex-col items-center gap-2 sm:items-end">
+          <nav class="flex flex-wrap justify-center gap-x-4 gap-y-2">
+            <a
+              href="/privacy.html"
+              class="hover:text-teal-300 underline underline-offset-4"
+              >Privacy Notice</a
+            >
+            <a
+              href="/copyright-policy.html"
+              class="hover:text-teal-300 underline underline-offset-4"
+              >Copyright &amp; Artwork Use</a
+            >
+            <a
+              href="/terms.html"
+              class="hover:text-teal-300 underline underline-offset-4"
+              >Terms &amp; Conditions</a
+            >
+          </nav>
+          <p>&copy; 2026 Jelly Bean Artwork. All rights reserved.</p>
+        </div>
       </div>
     </footer>
 

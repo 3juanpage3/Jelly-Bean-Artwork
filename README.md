@@ -7,9 +7,13 @@ This repository contains the Jelly Bean Artwork storefront and an owner-only cat
 - `index.html`, `styles.css`, and `script.js` implement the storefront. The gallery reads available paintings from Supabase when configured; hardcoded sample paintings are no longer used.
 - `styles.min.css` is generated from `styles.css` with Tailwind CSS. Rebuild it with `npm run build:css` after changing styles or Tailwind classes.
 - `admin.html`, `admin.js`, and `admin.css` provide owner sign-in, catalogue listing, create/edit, archive/restore, permanent delete, and image upload/replacement.
+- `privacy.html`, `copyright-policy.html`, and `terms.html` provide the linked visitor notices and artwork-use policy. Review the privacy notice whenever data collection, analytics, checkout, or third-party providers change; have sale terms reviewed before treating them as a complete consumer contract.
+- Gallery and quick-view images show a visible copyright overlay as a deterrent only. The browser still receives the image URL; use resized, watermarked preview files and keep full-resolution originals private if stronger practical protection is needed.
 - `supabase/migrations/001_paintings.sql` defines the catalogue table, timestamp trigger, and owner-only database/Storage write policies. `002_remove_painting_sort_order.sql` restricts the medium to Acrylic and removes display order. Replace the owner UUID placeholder before applying migrations.
-- `vite.config.js` builds both pages into `dist/`; `npm run build` also regenerates the Tailwind CSS.
+- `vite.config.js` builds the storefront, admin, and policy pages into `dist/`; `npm run build` also regenerates the Tailwind CSS.
 - Checkout opens WhatsApp with a prefilled order message. The customer must send it in WhatsApp; orders are not stored on a server and there is no payment processing.
+- The checkout form explains which details are placed in the WhatsApp draft and links to WhatsApp's privacy policy. Review the notice if the checkout fields or order flow change.
+- `vercel.json` applies baseline security headers and a restrictive Content Security Policy to the storefront, admin, and policy pages. The policy permits only same-origin scripts; the explicitly used Google Fonts, Font Awesome CDN, Unsplash, and Supabase hosts are allowlisted. HSTS is provided by Vercel for the production domain. Recheck the CSP if adding external providers, inline scripts/styles, analytics, or a custom Supabase domain.
 - The Supabase project and Vercel deployment are not created/configured by this repository. Complete the setup below before using the admin page.
 
 The design keeps the storefront visual style, adds a separate owner-only admin page, and uses the same Supabase catalogue for admin management and public available paintings.

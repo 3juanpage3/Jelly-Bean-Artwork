@@ -21,10 +21,10 @@ function escapeHTML(value) {
 }
 
 // Initialize App
-window.onload = async function () {
+window.addEventListener("load", async () => {
   updateCartUI();
   await loadGallery();
-};
+});
 
 function setGalleryStatus(message, isError = false) {
   const status = document.getElementById("gallery-status");
@@ -99,6 +99,7 @@ function renderGallery(categoryFilter = currentCategory) {
                     <div>
                         <button type="button" data-open-product="${escapeHTML(item.id)}" class="relative h-64 w-full overflow-hidden group cursor-pointer">
                           <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span aria-hidden="true" class="pointer-events-none absolute bottom-3 left-3 rounded bg-brand-dark/70 px-2 py-1 text-[10px] font-medium tracking-wide text-white/90 backdrop-blur-sm select-none">© Jelly Bean Artwork</span>
                             <div class="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span class="bg-brand-dark/90 text-teal-300 border border-teal-400/40 px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase flex items-center gap-2">
                                     <i class="fa-solid fa-eye"></i> Quick View
@@ -138,7 +139,7 @@ document
   });
 
 // Filter Buttons Switcher
-function filterGallery(category, clickEvent) {
+function filterGallery(category, activeButton) {
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.classList.remove("bg-brand-pink", "text-white", "border-pink-400/30");
     btn.classList.add(
@@ -148,12 +149,12 @@ function filterGallery(category, clickEvent) {
     );
   });
 
-  clickEvent.currentTarget.classList.remove(
+  activeButton.classList.remove(
     "bg-brand-card",
     "text-slate-300",
     "border-purple-800/40",
   );
-  clickEvent.currentTarget.classList.add(
+  activeButton.classList.add(
     "bg-brand-pink",
     "text-white",
     "border-pink-400/30",
@@ -161,6 +162,18 @@ function filterGallery(category, clickEvent) {
 
   renderGallery(category);
 }
+
+document
+  .getElementById("filter-buttons")
+  .addEventListener("click", (clickEvent) => {
+    const button = clickEvent.target.closest("[data-gallery-filter]");
+    if (!button) return;
+    filterGallery(button.dataset.galleryFilter, button);
+  });
+
+document
+  .getElementById("commission-form")
+  .addEventListener("submit", handleCommissionSubmit);
 
 // Add Original Painting to Cart
 function addToCart(itemId) {
@@ -240,6 +253,16 @@ document
     input.addEventListener("change", updateCustomCanvasSizeField),
   );
 
+document
+  .getElementById("checkout-form")
+  .addEventListener("submit", submitOrderRequest);
+
+document.querySelectorAll("[data-cart-toggle], [data-cart-backdrop]").forEach(
+  (button) => {
+    button.addEventListener("click", toggleCart);
+  },
+);
+
 // Update Cart UI
 function updateCartUI() {
   const badge = document.getElementById("cart-badge");
@@ -282,13 +305,13 @@ function updateCartUI() {
                             <span class="text-sm font-bold font-mono text-lime-400">${item.isCustom ? "Quote on request" : `R ${itemTotal}`}</span>
 
                             <div class="flex items-center gap-2 bg-brand-card rounded-lg border border-purple-800 px-2 py-0.5">
-                                <button onclick="changeQty(${index}, -1)" class="text-slate-400 hover:text-white text-xs px-1">-</button>
+                                <button type="button" data-cart-action="decrease" data-cart-index="${index}" aria-label="Decrease quantity" class="text-slate-400 hover:text-white text-xs px-1">-</button>
                                 <span class="text-xs font-mono text-white">${item.qty}</span>
-                                <button onclick="changeQty(${index}, 1)" class="text-slate-400 hover:text-white text-xs px-1">+</button>
+                                <button type="button" data-cart-action="increase" data-cart-index="${index}" aria-label="Increase quantity" class="text-slate-400 hover:text-white text-xs px-1">+</button>
                             </div>
                         </div>
                     </div>
-                    <button onclick="removeItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-pink-400 text-xs p-1">
+                    <button type="button" data-cart-action="remove" data-cart-index="${index}" aria-label="Remove item" class="absolute top-2 right-2 text-slate-500 hover:text-pink-400 text-xs p-1">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 `;
@@ -308,6 +331,28 @@ function updateCartUI() {
             `;
   container.appendChild(totalDiv);
 }
+
+document
+  .getElementById("cart-items-container")
+  .addEventListener("click", (clickEvent) => {
+    const button = clickEvent.target.closest("[data-cart-action]");
+    if (!button) return;
+
+    const index = Number(button.dataset.cartIndex);
+    if (!Number.isInteger(index) || index < 0 || index >= cart.length) return;
+
+    switch (button.dataset.cartAction) {
+      case "decrease":
+        changeQty(index, -1);
+        break;
+      case "increase":
+        changeQty(index, 1);
+        break;
+      case "remove":
+        removeItem(index);
+        break;
+    }
+  });
 
 // Qty adjust
 function changeQty(index, delta) {
@@ -405,8 +450,9 @@ function openProductModal(id) {
 
   const modalContent = document.getElementById("product-modal-content");
   modalContent.innerHTML = `
-                <div class="h-80 sm:h-[70vh] sm:max-h-[600px] bg-brand-dark/60 overflow-hidden">
+                <div class="relative h-80 sm:h-[70vh] sm:max-h-[600px] bg-brand-dark/60 overflow-hidden">
                   <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" class="w-full h-full object-contain">
+                  <span aria-hidden="true" class="pointer-events-none absolute bottom-4 left-4 rounded bg-brand-dark/70 px-2 py-1 text-[10px] font-medium tracking-wide text-white/90 backdrop-blur-sm select-none">© Jelly Bean Artwork</span>
                 </div>
                 <div class="p-6 flex flex-col justify-between">
                     <div>
@@ -441,6 +487,10 @@ document
     closeProductModal();
   });
 
+document
+  .querySelector("[data-close-product-modal]")
+  .addEventListener("click", closeProductModal);
+
 function closeProductModal() {
   document.getElementById("product-modal").classList.add("hidden");
   document.getElementById("product-modal").classList.remove("flex");
@@ -458,15 +508,3 @@ function showToast(message) {
     toast.classList.add("translate-y-20", "opacity-0");
   }, 3000);
 }
-
-Object.assign(window, {
-  addToCart,
-  changeQty,
-  closeProductModal,
-  filterGallery,
-  handleCommissionSubmit,
-  openProductModal,
-  removeItem,
-  submitOrderRequest,
-  toggleCart,
-});

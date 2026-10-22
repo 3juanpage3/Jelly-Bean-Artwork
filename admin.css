@@ -424,6 +424,13 @@ footer span {
   padding: 0 5px;
   color: var(--green);
 }
+footer nav {
+  margin-top: 8px;
+}
+footer nav a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .visually-hidden {
   position: absolute;
   width: 1px;

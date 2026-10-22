@@ -9,6 +9,9 @@ export default defineConfig({
       input: {
         main: `${projectRoot}/index.html`,
         admin: `${projectRoot}/admin.html`,
+        privacy: `${projectRoot}/privacy.html`,
+        copyrightPolicy: `${projectRoot}/copyright-policy.html`,
+        terms: `${projectRoot}/terms.html`,
       },
     },
   },
