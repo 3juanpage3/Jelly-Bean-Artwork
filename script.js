@@ -514,7 +514,7 @@ function submitOrderRequest(event) {
   });
 
   const whatsappNumber = (
-    import.meta.env.VITE_WHATSAPP_NUMBER || "+27723322677"
+    import.meta.env.VITE_WHATSAPP_NUMBER || "+27662904426"
   ).replace(/\D/g, "");
 
   const message = [
