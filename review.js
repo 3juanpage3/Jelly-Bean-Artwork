@@ -10,6 +10,19 @@ function setMessage(text, isError = false) {
   message.classList.toggle("text-lime-300", !isError);
 }
 
+function getSubmissionErrorMessage(error) {
+  if (error?.code === "PGRST205" || error?.code === "42P01") {
+    return "The reviews table is missing in Supabase. In your Supabase SQL Editor, run supabase/migrations/005_customer_reviews.sql, then try again.";
+  }
+  if (error?.code === "42501") {
+    return "Supabase denied the review submission. Run supabase/migrations/005_customer_reviews.sql in your Supabase SQL Editor to set up the review permissions.";
+  }
+  if (error?.code === "23514") {
+    return "Supabase rejected the review. Please agree to the publication terms and check that both ratings and your comment are valid.";
+  }
+  return `Your review could not be submitted. ${error?.message || "Check your connection and try again."}`;
+}
+
 if (!isSupabaseConfigured) {
   submitButton.disabled = true;
   setMessage("Reviews are temporarily unavailable. Please try again later.", true);
@@ -46,10 +59,7 @@ form.addEventListener("submit", async (event) => {
     );
   } catch (error) {
     console.error("Could not submit customer review:", error);
-    setMessage(
-      "Your review could not be submitted. Please try again later or contact the artist.",
-      true,
-    );
+    setMessage(getSubmissionErrorMessage(error), true);
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = "Submit review";

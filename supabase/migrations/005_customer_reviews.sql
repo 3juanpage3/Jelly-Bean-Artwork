@@ -1,4 +1,4 @@
-create table public.reviews (
+create table if not exists public.reviews (
   id uuid primary key default gen_random_uuid(),
   artwork text not null default ''
     check (char_length(artwork) <= 120),
@@ -19,10 +19,10 @@ create table public.reviews (
     check (status <> 'published' or publication_consent)
 );
 
-create index reviews_status_created_at_idx
+create index if not exists reviews_status_created_at_idx
 on public.reviews (status, created_at desc);
 
-create function public.initialize_customer_review()
+create or replace function public.initialize_customer_review()
 returns trigger
 language plpgsql
 set search_path = ''
@@ -35,10 +35,12 @@ begin
 end;
 $$;
 
+drop trigger if exists reviews_initialize on public.reviews;
 create trigger reviews_initialize
 before insert on public.reviews
 for each row execute function public.initialize_customer_review();
 
+drop trigger if exists reviews_updated_at on public.reviews;
 create trigger reviews_updated_at
 before update on public.reviews
 for each row execute function public.set_painting_updated_at();
@@ -49,6 +51,7 @@ revoke all on public.reviews from anon, authenticated;
 grant select, insert on public.reviews to anon;
 grant select, insert, update, delete on public.reviews to authenticated;
 
+drop policy if exists "Public can submit consented pending reviews" on public.reviews;
 create policy "Public can submit consented pending reviews"
 on public.reviews for insert
 to anon, authenticated
@@ -57,6 +60,7 @@ with check (
   and publication_consent
 );
 
+drop policy if exists "Public can read consented published reviews" on public.reviews;
 create policy "Public can read consented published reviews"
 on public.reviews for select
 to anon, authenticated
@@ -65,6 +69,7 @@ using (
   and publication_consent
 );
 
+drop policy if exists "Catalogue admins can read all reviews" on public.reviews;
 create policy "Catalogue admins can read all reviews"
 on public.reviews for select
 to authenticated
@@ -75,6 +80,7 @@ using (
   )
 );
 
+drop policy if exists "Catalogue admins can update reviews" on public.reviews;
 create policy "Catalogue admins can update reviews"
 on public.reviews for update
 to authenticated
@@ -91,6 +97,7 @@ with check (
   )
 );
 
+drop policy if exists "Catalogue admins can delete reviews" on public.reviews;
 create policy "Catalogue admins can delete reviews"
 on public.reviews for delete
 to authenticated
@@ -100,3 +107,5 @@ using (
     '5d158ab9-0346-4e84-8268-5fa0ff389c8e'::uuid
   )
 );
+
+notify pgrst, 'reload schema';

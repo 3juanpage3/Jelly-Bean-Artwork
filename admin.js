@@ -191,7 +191,11 @@ async function loadReviews() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    setPageMessage(`Could not load customer reviews: ${error.message}`, true);
+    const message =
+      error.code === "PGRST205" || error.code === "42P01"
+        ? "The reviews table is missing from Supabase. In your Supabase SQL Editor, run supabase/migrations/005_customer_reviews.sql, then refresh this page."
+        : `Could not load customer reviews: ${error.message}`;
+    setPageMessage(message, true);
     return;
   }
   reviews = data;
@@ -303,6 +307,12 @@ function resetReviewEditor() {
   elements.reviewConsentNote.textContent = "";
 }
 
+function toDateTimeLocal(value) {
+  const date = new Date(value);
+  const offset = date.getTimezoneOffset() * 60_000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
 function editReview(review) {
   editingReview = review;
   elements.reviewEditForm.reset();
@@ -311,6 +321,9 @@ function editReview(review) {
   }`;
   elements.reviewEditForm.elements.display_name.value = review.display_name;
   elements.reviewEditForm.elements.artwork.value = review.artwork;
+  elements.reviewEditForm.elements.created_at.value = toDateTimeLocal(
+    review.created_at,
+  );
   elements.reviewEditForm.elements.painting_rating.value =
     String(review.painting_rating);
   elements.reviewEditForm.elements.service_rating.value =
@@ -345,6 +358,12 @@ async function saveReview(event) {
     elements.reviewEditMessage.textContent = "A review comment is required.";
     return;
   }
+  const reviewDate = new Date(String(formData.get("created_at")));
+  if (Number.isNaN(reviewDate.getTime())) {
+    elements.reviewEditMessage.textContent =
+      "Enter a valid date and time for this review.";
+    return;
+  }
 
   const saveButton = elements.reviewEditForm.querySelector(
     'button[type="submit"]',
@@ -357,6 +376,7 @@ async function saveReview(event) {
       .update({
         display_name: String(formData.get("display_name")).trim(),
         artwork: String(formData.get("artwork")).trim(),
+        created_at: reviewDate.toISOString(),
         painting_rating: Number(formData.get("painting_rating")),
         service_rating: Number(formData.get("service_rating")),
         comment,

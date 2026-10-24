@@ -273,7 +273,7 @@
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Submitted</th>
+                  <th scope="col">Review date</th>
                   <th scope="col">Customer / artwork</th>
                   <th scope="col">Ratings</th>
                   <th scope="col">Comment</th>
@@ -308,6 +308,15 @@
               <div class="field">
                 <label for="review-edit-artwork">Painting or commission</label>
                 <input id="review-edit-artwork" name="artwork" maxlength="120" />
+              </div>
+              <div class="field">
+                <label for="review-edit-created-at">Review date and time</label>
+                <input
+                  id="review-edit-created-at"
+                  name="created_at"
+                  type="datetime-local"
+                  required
+                />
               </div>
               <div class="field">
                 <label for="review-edit-painting">Painting rating</label>
