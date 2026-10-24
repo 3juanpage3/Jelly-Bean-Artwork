@@ -2,6 +2,7 @@ import { isSupabaseConfigured, supabase } from "./supabase-client.js";
 
 const galleryItems = [];
 let currentCategory = "all";
+let reviewRotationTimer;
 
 // Shopping Cart State
 let cart = [];
@@ -37,7 +38,7 @@ async function loadReviews() {
   const { data, error } = await supabase
     .from("reviews")
     .select(
-      "artwork, display_name, painting_rating, service_rating, comment, created_at",
+      "id, artwork, display_name, painting_rating, service_rating, comment, created_at",
     )
     .eq("status", "published")
     .eq("publication_consent", true)
@@ -50,27 +51,64 @@ async function loadReviews() {
     return;
   }
 
-  list.replaceChildren();
   if (!data.length) {
+    list.replaceChildren();
     status.textContent =
       "No customer reviews have been published yet. If you have received your painting, you can be the first to share your feedback.";
     return;
   }
 
-  for (const review of data) {
-    const card = document.createElement("article");
-    card.className =
-      "rounded-2xl border border-purple-800/50 bg-brand-card/80 p-6";
-    const author = escapeHTML(review.display_name.trim() || "Customer");
-    const artwork = review.artwork
-      ? `<p class="mt-2 text-xs text-teal-300">${escapeHTML(review.artwork)}</p>`
-      : "";
-    const date = new Date(review.created_at).toLocaleDateString("en-ZA", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-    card.innerHTML = `
+  const visibleCount = Math.min(3, data.length);
+  let previousIds = [];
+  const renderRandomReviews = () => {
+    const reviews = [...data];
+    for (let index = reviews.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [reviews[index], reviews[randomIndex]] = [
+        reviews[randomIndex],
+        reviews[index],
+      ];
+    }
+
+    const selection = reviews.slice(0, visibleCount);
+    if (
+      data.length > visibleCount &&
+      selection.every((review) => previousIds.includes(review.id))
+    ) {
+      selection[selection.length - 1] = data.find(
+        (review) => !previousIds.includes(review.id),
+      );
+    }
+
+    previousIds = selection.map((review) => review.id);
+    list.replaceChildren(...selection.map(createReviewCard));
+  };
+
+  renderRandomReviews();
+  window.clearInterval(reviewRotationTimer);
+  if (data.length > visibleCount) {
+    reviewRotationTimer = window.setInterval(renderRandomReviews, 30_000);
+  }
+  status.textContent =
+    data.length > visibleCount
+      ? `Showing 3 of ${data.length} recent customer reviews. Rotates every 30 seconds.`
+      : `Showing ${data.length} recent customer review${data.length === 1 ? "" : "s"}.`;
+}
+
+function createReviewCard(review) {
+  const card = document.createElement("article");
+  card.className =
+    "rounded-2xl border border-purple-800/50 bg-brand-card/80 p-6";
+  const author = escapeHTML(review.display_name.trim() || "Customer");
+  const artwork = review.artwork
+    ? `<p class="mt-2 text-xs text-teal-300">${escapeHTML(review.artwork)}</p>`
+    : "";
+  const date = new Date(review.created_at).toLocaleDateString("en-ZA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  card.innerHTML = `
       <div class="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 class="font-bold text-white">${author}</h3>
@@ -84,9 +122,7 @@ async function loadReviews() {
         <p class="text-slate-400">Service <span class="ml-1 font-semibold text-teal-300" aria-label="${review.service_rating} out of 5">${"★".repeat(review.service_rating)}${"☆".repeat(5 - review.service_rating)}</span></p>
       </div>
     `;
-    list.append(card);
-  }
-  status.textContent = `Showing ${data.length} recent customer review${data.length === 1 ? "" : "s"}.`;
+  return card;
 }
 
 function setGalleryStatus(message, isError = false) {
