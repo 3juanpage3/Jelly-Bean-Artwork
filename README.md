@@ -169,10 +169,10 @@ Copy `.env.example` to `.env` and fill in the project values. `.env` is ignored 
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-publishable-or-anon-key
 VITE_OWNER_IDS=owner-auth-user-uuid,second-owner-auth-user-uuid
-VITE_WHATSAPP_NUMBER=your-whatsapp-number-in-international-format
+VITE_WHATSAPP_NUMBER=27723322677
 ```
 
-Set `VITE_WHATSAPP_NUMBER` to the destination number using international digits only, without a plus sign or spaces. Use the Supabase project URL and publishable key (or legacy anon key). `VITE_OWNER_IDS` is a comma-separated list of catalogue admin UUIDs; it is browser-visible and is only a UI check, never a secret or a substitute for RLS. Do not use a service-role key here.
+WhatsApp checkout defaults to the artist's `+27 72 332 2677` number. Set `VITE_WHATSAPP_NUMBER` to override it, using international digits with no plus sign, spaces, or punctuation. Use the Supabase project URL and publishable key (or legacy anon key). `VITE_OWNER_IDS` is a comma-separated list of catalogue admin UUIDs; it is browser-visible and is only a UI check, never a secret or a substitute for RLS. Do not use a service-role key here.
 
 To add a catalogue admin after initial setup, invite/create their Supabase Auth account, apply the corresponding owner-access migration in `supabase/migrations`, add their UUID to `VITE_OWNER_IDS`, and redeploy. This grants catalogue administration only; it does not grant Supabase dashboard or organization access.
 

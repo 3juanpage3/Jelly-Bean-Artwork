@@ -513,16 +513,9 @@ function submitOrderRequest(event) {
     }${item.isCustom ? "" : ` - R ${sub}`}`;
   });
 
-  const whatsappNumber = (import.meta.env.VITE_WHATSAPP_NUMBER || "").replace(
-    /\D/g,
-    "",
-  );
-  if (!whatsappNumber) {
-    alert(
-      "WhatsApp orders are not configured yet. Set VITE_WHATSAPP_NUMBER in your .env file.",
-    );
-    return;
-  }
+  const whatsappNumber = (
+    import.meta.env.VITE_WHATSAPP_NUMBER || "+27723322677"
+  ).replace(/\D/g, "");
 
   const message = [
     "Painting order request",
