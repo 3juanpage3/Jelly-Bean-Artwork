@@ -91,7 +91,7 @@ async function loadReviews() {
   }
   status.textContent =
     data.length > visibleCount
-      ? `Showing 3 of ${data.length} recent customer reviews. Rotates every 30 seconds.`
+      ? ""
       : `Showing ${data.length} recent customer review${data.length === 1 ? "" : "s"}.`;
 }
 
