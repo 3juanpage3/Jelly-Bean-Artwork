@@ -319,7 +319,7 @@ td {
   height: 48px;
   flex: 0 0 auto;
   border-radius: 3px;
-  object-fit: cover;
+  object-fit: contain;
   background: #edf1ec;
 }
 .artwork-cell strong {
@@ -539,6 +539,10 @@ footer nav a {
   }
   .review-fields {
     grid-template-columns: 1fr;
+  }
+  .page-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 }
 

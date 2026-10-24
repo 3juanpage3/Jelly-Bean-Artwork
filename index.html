@@ -52,27 +52,28 @@
     <header
       class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-md border-b border-purple-900/40 px-4 lg:px-8 py-3"
     >
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
         <!-- Brand Logo -->
         <a href="#home" class="flex items-center gap-3 group">
           <img
-            src="/images/Logo-small.png"
+            src="/images/Logo-small.webp"
             alt="Jelly Bean Artwork logo"
             width="72"
             height="72"
             class="h-16 w-16 md:h-[72px] md:w-[72px] object-contain transition-transform duration-300 group-hover:scale-105"
           />
           <div>
-            <span
-              class="block text-[10px] md:text-xs font-semibold tracking-widest uppercase text-teal-400/80"
-            >
+            <span class="block text-[10px] font-semibold tracking-widest uppercase text-teal-400/80 sm:hidden">
+              Art Studio
+            </span>
+            <span class="hidden text-xs font-semibold tracking-widest uppercase text-teal-400/80 sm:block">
               Canvas & Custom Studio
             </span>
           </div>
         </a>
 
         <!-- Desktop Nav Links -->
-        <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
+        <nav class="hidden lg:flex items-center gap-8 font-medium text-sm">
           <a href="#home" class="hover:text-brand-pink transition-colors"
             >Home</a
           >
@@ -93,7 +94,8 @@
           class="relative bg-gradient-to-r from-brand-pink to-brand-violet hover:from-pink-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-full font-medium flex items-center gap-2.5 shadow-lg shadow-pink-900/30 transition-all duration-300 hover:scale-105 active:scale-95"
         >
           <i class="fa-solid fa-palette text-yellow-300"></i>
-          <span>Order Request Cart</span>
+          <span class="hidden sm:inline">Order Request Cart</span>
+          <span class="sm:hidden">Cart</span>
           <span
             id="cart-badge"
             class="bg-yellow-400 text-slate-900 font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center ml-1"
@@ -101,6 +103,19 @@
           >
         </button>
       </div>
+      <nav
+        class="mx-auto mt-2 grid max-w-7xl grid-cols-2 gap-x-4 gap-y-1 px-1 pb-1 text-sm font-medium lg:hidden"
+        aria-label="Main navigation"
+      >
+        <a href="#home" class="py-1.5 hover:text-brand-pink">Home</a>
+        <a href="#gallery" class="py-1.5 hover:text-brand-teal"
+          >Available Paintings</a
+        >
+        <a href="#commission" class="py-1.5 hover:text-brand-lime"
+          >Custom Request</a
+        >
+        <a href="#about" class="py-1.5 hover:text-brand-pink">About Artist</a>
+      </nav>
     </header>
 
     <!-- Main Content Area -->
@@ -119,9 +134,9 @@
         ></div>
 
         <div
-          class="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center relative z-10"
+          class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center relative z-10"
         >
-          <div class="space-y-6 text-center md:text-left">
+          <div class="space-y-6 text-center lg:text-left">
             <div
               class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-900/60 to-pink-900/60 border border-pink-500/30 rounded-full px-4 py-1.5 text-xs font-bold tracking-wider uppercase text-pink-300"
             >
@@ -132,7 +147,7 @@
             </div>
 
             <h1
-              class="font-heading text-5xl sm:text-6xl md:text-7xl font-normal leading-tight text-white tracking-wide"
+              class="font-heading text-4xl sm:text-6xl lg:text-7xl font-normal leading-tight text-white tracking-wide"
             >
               Vibrant Custom Canvas Art <br />
               <span
@@ -142,7 +157,7 @@
             </h1>
 
             <p
-              class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto md:mx-0 leading-relaxed font-light"
+              class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed font-light"
             >
               Welcome to Jelly Bean Artwork! Browse hand-painted original canvas
               art or submit your dream custom design across anime, gaming,
@@ -150,7 +165,7 @@
             </p>
 
             <div
-              class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2"
+              class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
             >
               <a
                 href="#gallery"
@@ -216,33 +231,33 @@
               <div
                 class="rounded-2xl bg-slate-900"
               >
-                <div class="group overflow-hidden rounded-2xl bg-slate-900">
+                <div class="overflow-hidden rounded-2xl bg-slate-900">
                   <img
-                    src="/images/Main.png"
+                    src="/images/Main.webp"
                     alt="Clash of Elements: Electric versus Fire"
-                    class="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    class="aspect-video w-full object-contain"
                     fetchpriority="high"
                     decoding="async"
                   />
                 </div>
                 <div class="p-4">
-                  <div class="flex items-center justify-between">
-                    <div>
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
                       <span
                         class="text-xs uppercase tracking-wider text-pink-400 font-bold"
                         >Featured Original</span
                       >
-                      <h3 class="font-heading text-2xl text-white">
+                      <h3 class="break-words font-heading text-xl text-white sm:text-2xl">
                         Clash of Elements: Electric versus Fire
                       </h3>
-                      <p class="text-xs text-slate-300">
+                      <p class="break-words text-xs text-slate-300">
                         16" x 20" • Acrylic on Gallery Canvas
                       </p>
                     </div>
                     <a
                       href="#gallery"
                       aria-label="Browse available paintings"
-                      class="bg-brand-pink hover:bg-pink-600 text-white p-3 rounded-full shadow-lg transition-transform active:scale-95"
+                      class="shrink-0 bg-brand-pink hover:bg-pink-600 text-white p-3 rounded-full shadow-lg transition-transform active:scale-95"
                     >
                       <i
                         class="fa-solid fa-arrow-down text-lg"
@@ -579,15 +594,15 @@
         id="about"
         class="py-20 px-4 max-w-7xl mx-auto border-t border-purple-900/30"
       >
-        <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div class="relative">
             <div
-              class="w-full h-96 rounded-3xl overflow-hidden gradient-border p-2 shadow-2xl"
+              class="w-full aspect-[4/3] rounded-3xl overflow-hidden gradient-border p-2 shadow-2xl"
             >
               <img
                 src="/images/Artist.jpeg"
                 alt="Jelly Bean Artwork artist"
-                class="w-full h-full object-cover rounded-2xl"
+                class="w-full h-full object-contain rounded-2xl"
                 loading="lazy"
                 decoding="async"
               />
@@ -834,10 +849,11 @@
                 <span>Submit Painting Order Request</span>
               </button>
               <p class="text-xs text-slate-400 leading-relaxed">
-                This opens WhatsApp with a draft containing your contact and
-                order details. Review it before sending; nothing is sent until
-                you press Send in WhatsApp. If you send it, the artist receives
-                your details. See our
+                This opens WhatsApp with your contact and order details, plus
+                links to selected painting images. Review it before sending;
+                nothing is sent until you press Send in WhatsApp. Attach any
+                reference photos in WhatsApp yourself. If you send it, the
+                artist receives your details. See our
                 <a
                   href="/privacy.html"
                   class="text-teal-300 underline hover:text-teal-200"

@@ -196,8 +196,8 @@ function renderGallery(categoryFilter = currentCategory) {
       "bg-brand-card/80 rounded-2xl overflow-hidden border border-purple-800/40 glow-box-hover transition-all duration-300 flex flex-col justify-between";
     card.innerHTML = `
                     <div>
-                        <button type="button" data-open-product="${escapeHTML(item.id)}" class="relative h-64 w-full overflow-hidden group cursor-pointer">
-                          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <button type="button" data-open-product="${escapeHTML(item.id)}" class="relative h-64 w-full overflow-hidden group cursor-pointer bg-brand-dark">
+                          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.image_alt)}" loading="lazy" decoding="async" class="w-full h-full object-contain">
                             <span aria-hidden="true" class="pointer-events-none absolute bottom-3 left-3 rounded bg-brand-dark/70 px-2 py-1 text-[10px] font-medium tracking-wide text-white/90 backdrop-blur-sm select-none">© Jelly Bean Artwork</span>
                             <div class="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span class="bg-brand-dark/90 text-teal-300 border border-teal-400/40 px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase flex items-center gap-2">
@@ -390,7 +390,7 @@ function updateCartUI() {
     card.className =
       "bg-brand-dark/90 rounded-xl p-3 border border-purple-800/50 flex gap-3 relative";
     card.innerHTML = `
-                    <img src="${escapeHTML(item.image)}" alt="" loading="lazy" decoding="async" class="w-16 h-16 rounded-lg object-cover border border-purple-700/40">
+                    <img src="${escapeHTML(item.image)}" alt="" loading="lazy" decoding="async" class="w-16 h-16 rounded-lg object-contain bg-brand-dark border border-purple-700/40">
                     <div class="flex-grow">
                         <div class="flex justify-between items-start pr-4">
                             <h4 class="font-heading text-lg text-white leading-tight">${escapeHTML(item.title)}</h4>
@@ -510,7 +510,7 @@ function submitOrderRequest(event) {
     total += sub;
     return `${item.qty} x ${item.title} (${item.details})${
       item.notes ? `\n  Commission details: ${item.notes}` : ""
-    }${item.isCustom ? "" : ` - R ${sub}`}`;
+    }${item.isCustom ? "" : ` - R ${sub}\n  Painting image: ${item.image}`}`;
   });
 
   const whatsappNumber = (
